@@ -2,6 +2,8 @@
 
 Agent Identity is a platform made of several services. Each service owns a specific part of the agent governance lifecycle.
 
+Cost is not a standalone product category. Cost appears across every service as a financial attribute attached to identity, lifecycle, access, usage, audit, evaluation, optimization, and payment events.
+
 ## Core Services
 
 ### Agent Registry Service
@@ -17,6 +19,7 @@ Owns:
 - Versions
 - Lifecycle status
 - Identity cards
+- Registry-level cost attribution metadata
 
 ### Agent Lifecycle Service
 
@@ -32,6 +35,7 @@ Owns:
 - Terminated
 - Alumni
 - Archived
+- Lifecycle-triggered cost controls
 
 ### Agent Access Service
 
@@ -46,6 +50,7 @@ Owns:
 - Delegations
 - Credentials
 - Tool access
+- Access-related cost and approval overhead
 
 ### Agent Usage Service
 
@@ -60,20 +65,7 @@ Owns:
 - Storage usage
 - Approval events
 - API calls
-
-### Agent Spend Service
-
-Company-side cost visibility and budget governance.
-
-Owns:
-
-- Runtime cost
-- Ops cost
-- Budget limits
-- Cost center allocation
-- Showback
-- Chargeback
-- Spend analytics
+- Usage-level cost attribution
 
 ### Agent Pay Service
 
@@ -94,7 +86,18 @@ Owns:
 
 Cost optimization service for AI agents.
 
-Agent FinOps uses Agent Usage, Agent Runtime Cost, Agent Ops Cost, Agent Spend, and Agent Pay data to reduce waste and improve financial governance.
+Agent FinOps is not the only place where cost exists. Instead, it analyzes cost signals from every service and recommends ways to reduce waste and improve financial governance.
+
+Uses signals from:
+
+- Registry ownership and cost center metadata
+- Lifecycle state
+- Access policies and approvals
+- Usage events
+- Runtime activity
+- Audit and policy enforcement events
+- Evaluation outcomes
+- Pay/settlement records
 
 Owns:
 
@@ -105,7 +108,7 @@ Owns:
 - Storage cost optimization
 - Tool/API cost optimization
 - Budget anomaly detection
-- Cost-based lifecycle recommendations
+- Cost-aware lifecycle recommendations
 
 Example actions:
 
@@ -148,7 +151,7 @@ Example actions:
 
 ### Agent Audit Service
 
-Records all identity, access, usage, spend, pay, optimization, and lifecycle events.
+Records all identity, access, usage, pay, optimization, and lifecycle events.
 
 Owns:
 
@@ -158,6 +161,7 @@ Owns:
 - Lifecycle transition logs
 - Payment evidence
 - Optimization decision evidence
+- Cost evidence attached to events
 
 ### Agent Evaluation Service
 
@@ -172,6 +176,23 @@ Owns:
 - Tool accuracy
 - ROI signals
 - Probation pass/fail decisions
+- Cost-to-value signals
+
+## Cross-Cutting Cost Model
+
+Cost flows through all services rather than living in a single category.
+
+```txt
+Registry   -> owner, cost center, project attribution
+Lifecycle  -> state-based cost controls
+Access     -> cost of permissions, approvals, and privileged access
+Usage      -> raw metering and usage-derived cost
+Pay        -> external settlement
+Audit      -> compliance and evidence cost
+Evaluation -> cost-to-quality and cost-to-value metrics
+FinOps     -> optimization recommendations using all cost signals
+Optimize   -> performance recommendations using cost and quality signals
+```
 
 ## Service Map
 
@@ -180,9 +201,8 @@ Agent Registry     -> Who is the agent?
 Agent Lifecycle    -> What state is it in?
 Agent Access       -> What can it access?
 Agent Usage        -> What did it consume?
-Agent Spend        -> What did it cost the company?
 Agent Pay          -> What must be settled externally?
-Agent FinOps       -> How can cost be optimized?
+Agent FinOps       -> How can cost be optimized across services?
 Agent Optimize     -> How can performance be optimized?
 Agent Audit        -> What evidence exists?
 Agent Evaluation   -> Is the agent reliable and valuable?
@@ -195,7 +215,6 @@ Registry
 Lifecycle
 Access
 Usage
-Spend
 Pay
 FinOps
 Optimize
