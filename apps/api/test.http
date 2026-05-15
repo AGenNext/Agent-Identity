@@ -1,0 +1,25 @@
+### Health
+GET http://localhost:3000/health
+
+### List agents
+GET http://localhost:3000/agents
+
+### Create agent
+POST http://localhost:3000/agents
+Content-Type: application/json
+
+{
+  "name": "Sales Agent",
+  "provider": "OpenAI",
+  "model": "gpt-5"
+}
+
+### Issue token
+POST http://localhost:3000/tokens/issue
+Content-Type: application/json
+
+{
+  "principal": "user:chinmay",
+  "agent": "agent:research_assistant",
+  "scopes": ["search.web"]
+}
