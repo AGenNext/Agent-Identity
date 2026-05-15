@@ -8,8 +8,32 @@ DEFINE FIELD owner ON agent TYPE record;
 DEFINE FIELD provider ON agent TYPE option<string>;
 DEFINE FIELD model ON agent TYPE option<string>;
 DEFINE FIELD version ON agent TYPE option<string>;
-DEFINE FIELD status ON agent TYPE string DEFAULT 'active';
+DEFINE FIELD lifecycle_status ON agent TYPE string
+  ASSERT $value IN [
+    'requisition_open',
+    'sourcing',
+    'screening',
+    'interviewing',
+    'offer_pending',
+    'offer_accepted',
+    'onboarding',
+    'active',
+    'probation',
+    'leave',
+    'suspended',
+    'offboarding',
+    'terminated',
+    'alumni',
+    'archived'
+  ]
+  DEFAULT 'onboarding';
+DEFINE FIELD status ON agent TYPE string DEFAULT lifecycle_status;
 DEFINE FIELD created_at ON agent TYPE datetime DEFAULT time::now();
+DEFINE FIELD activated_at ON agent TYPE option<datetime>;
+DEFINE FIELD suspended_at ON agent TYPE option<datetime>;
+DEFINE FIELD offboarded_at ON agent TYPE option<datetime>;
+DEFINE FIELD terminated_at ON agent TYPE option<datetime>;
+DEFINE FIELD archived_at ON agent TYPE option<datetime>;
 
 DEFINE TABLE credential SCHEMAFULL;
 DEFINE FIELD subject ON credential TYPE record;
