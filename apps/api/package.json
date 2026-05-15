@@ -1,1 +1,1 @@
-{"name":"@agent-identity/api","version":"0.1.0","private":true,"type":"module","scripts":{"dev":"node src/index.js","build":"echo 'No build step yet'","start":"node src/index.js","lint":"echo 'No lint config yet'"},"dependencies":{"express":"^4.21.2"}}
+{"name":"@agent-identity/api","version":"0.1.0","private":true,"type":"module","scripts":{"dev":"node src/index.js","build":"echo 'No build step yet'","start":"node src/index.js","lint":"echo 'No lint config yet'"},"dependencies":{"@surrealdb/surrealdb":"^1.2.1","express":"^4.21.2","jose":"^5.9.6"}}
