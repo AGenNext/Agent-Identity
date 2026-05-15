@@ -1,0 +1,42 @@
+openapi: 3.1.0
+info:
+  title: Agent Identity API
+  version: 0.1.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: OK
+  /agents:
+    get:
+      summary: List agents
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create agent
+      responses:
+        '201':
+          description: Created
+  /authorize:
+    post:
+      summary: Evaluate authorization policy
+      responses:
+        '200':
+          description: Authorization decision
+  /tokens/issue:
+    post:
+      summary: Issue delegated JWT
+      responses:
+        '201':
+          description: Token issued
+  /tokens/verify:
+    post:
+      summary: Verify JWT
+      responses:
+        '200':
+          description: Token verified
