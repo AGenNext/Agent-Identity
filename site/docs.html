@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Docs | Agent Identity</title>
+    <meta name="description" content="Documentation for AgenNext Agent Identity." />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="nav">
+      <a class="brand" href="./index.html">Agent Identity</a>
+      <nav>
+        <a href="./index.html">Home</a>
+        <a href="./docs.html">Docs</a>
+        <a href="./api.html">API</a>
+        <a class="button small" href="https://github.com/AGenNext/Agent-Identity">GitHub</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero compact">
+        <div class="eyebrow">Documentation</div>
+        <h1>Build agent identity into your runtime.</h1>
+        <p class="lede">Register agents, resolve DIDs, issue credentials, grant capabilities, revoke compromised identities, and audit every lifecycle event.</p>
+      </section>
+
+      <section class="section split">
+        <div>
+          <span class="eyebrow">Concept</span>
+          <h2>Agent DID</h2>
+          <p>Every agent receives a stable decentralized identifier. The DID resolves to a DID document containing verification keys, authentication methods, assertion methods, and service endpoints.</p>
+        </div>
+        <pre><code>did:agennext:agent:7be23bb1-f998-4b47-bc32-eaf1d72185dc</code></pre>
+      </section>
+
+      <section class="section split">
+        <div>
+          <span class="eyebrow">Concept</span>
+          <h2>Agent Credential</h2>
+          <p>Credentials bind an agent DID to claims such as name, organization, model provider, capabilities, issuer, expiration, and proof metadata.</p>
+        </div>
+        <pre><code>{
+  "type": ["VerifiableCredential", "AgentIdentityCredential"],
+  "issuer": "did:agennext:issuer:identity",
+  "credentialSubject": {
+    "id": "did:agennext:agent:...",
+    "agentName": "Research Agent",
+    "trustLevel": "high"
+  }
+}</code></pre>
+      </section>
+
+      <section class="section">
+        <span class="eyebrow">Lifecycle</span>
+        <h2>Identity lifecycle</h2>
+        <div class="architecture">
+          <div>1. Register agent</div>
+          <div>2. Generate key</div>
+          <div>3. Publish DID document</div>
+          <div>4. Issue credential</div>
+          <div>5. Grant capabilities</div>
+          <div>6. Verify trust</div>
+          <div>7. Rotate keys</div>
+          <div>8. Revoke when needed</div>
+        </div>
+      </section>
+
+      <section class="section split">
+        <div>
+          <span class="eyebrow">Local Run</span>
+          <h2>Start the service</h2>
+          <p>Use Docker Compose for local development with the API service and Postgres.</p>
+        </div>
+        <pre><code>cp .env.example .env
+docker compose up --build
+
+open http://localhost:8000/docs</code></pre>
+      </section>
+    </main>
+
+    <footer>
+      <p>© AgenNext. Agent Identity documentation.</p>
+    </footer>
+  </body>
+</html>
