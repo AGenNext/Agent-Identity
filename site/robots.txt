@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://agennext.github.io/Agent-Identity/sitemap.xml
