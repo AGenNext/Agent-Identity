@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Agent Identity | AgenNext</title>
+    <meta name="description" content="AgenNext Agent Identity provides persistent, verifiable identities for autonomous AI agents." />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="nav">
+      <a class="brand" href="#top">Agent Identity</a>
+      <nav>
+        <a href="#problem">Problem</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#schema">Schema</a>
+        <a href="#deploy">Deploy</a>
+        <a class="button small" href="https://github.com/AGenNext/Agent-Identity">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="eyebrow">AgenNext Identity Control Plane</div>
+        <h1>Persistent, verifiable identity for AI agents.</h1>
+        <p class="lede">
+          Agent Identity gives every autonomous agent a cryptographic identity, DID document,
+          verifiable credentials, capability metadata, trust score, and audit trail.
+        </p>
+        <div class="actions">
+          <a class="button" href="#deploy">Deploy Now</a>
+          <a class="button secondary" href="#schema">View Schema</a>
+        </div>
+      </section>
+
+      <section class="grid cards" id="problem">
+        <article class="card">
+          <h2>Who is this agent?</h2>
+          <p>Resolve a stable DID and verify the keys associated with the agent.</p>
+        </article>
+        <article class="card">
+          <h2>Can it be trusted?</h2>
+          <p>Evaluate credentials, issuer trust, revocation state, reputation events, and trust score.</p>
+        </article>
+        <article class="card">
+          <h2>What can it do?</h2>
+          <p>Attach capability grants and constraints that downstream authorization systems can enforce.</p>
+        </article>
+      </section>
+
+      <section class="section" id="architecture">
+        <div class="section-head">
+          <span class="eyebrow">Architecture</span>
+          <h2>Identity lifecycle for autonomous systems</h2>
+          <p>
+            Register agents, generate keys, publish DID documents, issue credentials,
+            rotate keys, revoke access, and preserve audit history.
+          </p>
+        </div>
+        <div class="architecture">
+          <div>Agent Registry</div>
+          <div>DID Resolver</div>
+          <div>Key Management</div>
+          <div>Credential Issuer</div>
+          <div>Capability Grants</div>
+          <div>Trust Engine</div>
+          <div>Revocation Registry</div>
+          <div>Audit Log</div>
+        </div>
+      </section>
+
+      <section class="section split" id="schema">
+        <div>
+          <span class="eyebrow">Schema</span>
+          <h2>Production-ready data model</h2>
+          <p>
+            The recommended schema supports organizations, developers, agents, keys,
+            DID documents, credentials, grants, revocations, trust scores, reputation events,
+            and audit events.
+          </p>
+        </div>
+        <pre><code>organizations
+  └── developers
+        └── agents
+              ├── agent_keys
+              ├── did_documents
+              ├── verifiable_credentials
+              ├── capability_grants
+              ├── trust_scores
+              ├── reputation_events
+              └── audit_events</code></pre>
+      </section>
+
+      <section class="section split" id="deploy">
+        <div>
+          <span class="eyebrow">Deploy</span>
+          <h2>Run locally or deploy to the cloud</h2>
+          <p>
+            Use Docker Compose for local deployment and GitHub Actions for CI/CD.
+            The service is designed to run cleanly on Render, Railway, Fly.io, Cloud Run, ECS,
+            or Kubernetes.
+          </p>
+        </div>
+        <pre><code>cp .env.example .env
+docker compose up --build
+
+# Health checks
+curl http://localhost:8000/health
+curl http://localhost:8000/ready</code></pre>
+      </section>
+
+      <section class="cta">
+        <h2>Build the trust layer for the Internet of Agents.</h2>
+        <p>Start with identity, then connect authentication, authorization, policy, and observability.</p>
+        <a class="button" href="https://github.com/AGenNext/Agent-Identity">Open Repository</a>
+      </section>
+    </main>
+
+    <footer>
+      <p>© AgenNext. Agent Identity for secure autonomous systems.</p>
+    </footer>
+  </body>
+</html>
