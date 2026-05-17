@@ -1,10 +1,9 @@
 services:
-  surrealdb:
-    image: surrealdb/surrealdb:latest
-    container_name: agent-identity-surrealdb
-    command: start --log trace --user root --pass root memory
+  agent-identity:
+    build: .
+    container_name: agent-identity
     ports:
       - "8000:8000"
-    environment:
-      SURREAL_USER: root
-      SURREAL_PASS: root
+    env_file:
+      - .env
+    restart: unless-stopped

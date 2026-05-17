@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: agent-identity
+    env: docker
+    plan: starter
+    autoDeploy: true
