@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SDK Examples | Agent Identity</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+<header class="nav">
+  <a class="brand" href="./index.html">Agent Identity</a>
+  <nav>
+    <a href="./index.html">Home</a>
+    <a href="./docs.html">Docs</a>
+    <a href="./api.html">API</a>
+    <a href="./sdk.html">SDK</a>
+  </nav>
+</header>
+<main>
+  <section class="hero compact">
+    <div class="eyebrow">SDK Examples</div>
+    <h1>Integrate Agent Identity in minutes.</h1>
+    <p class="lede">Examples in Python, TypeScript, and curl.</p>
+  </section>
+
+  <section class="section split">
+    <div><h2>Python</h2></div>
+    <pre><code>import requests
+
+resp = requests.post(
+    "https://identity.agennext.ai/v1/agents",
+    json={"name": "Research Agent"}
+)
+print(resp.json())</code></pre>
+  </section>
+
+  <section class="section split">
+    <div><h2>TypeScript</h2></div>
+    <pre><code>const resp = await fetch('/v1/agents', {
+  method: 'POST',
+  headers: {'Content-Type': 'application/json'},
+  body: JSON.stringify({ name: 'Research Agent' })
+});</code></pre>
+  </section>
+
+  <section class="section split">
+    <div><h2>curl</h2></div>
+    <pre><code>curl -X POST https://identity.agennext.ai/v1/agents \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"Research Agent"}'</code></pre>
+  </section>
+</main>
+<footer><p>© AgenNext. SDK examples.</p></footer>
+</body>
+</html>
