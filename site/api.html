@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>API Reference | Agent Identity</title>
+    <meta name="description" content="REST API reference for AgenNext Agent Identity." />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="nav">
+      <a class="brand" href="./index.html">Agent Identity</a>
+      <nav>
+        <a href="./index.html">Home</a>
+        <a href="./docs.html">Docs</a>
+        <a href="./api.html">API</a>
+        <a class="button small" href="https://github.com/AGenNext/Agent-Identity">GitHub</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero compact">
+        <div class="eyebrow">API Reference</div>
+        <h1>REST endpoints for identity lifecycle management.</h1>
+        <p class="lede">The API is organized around agents, DIDs, keys, credentials, capabilities, trust, revocations, and audit events.</p>
+      </section>
+
+      <section class="section">
+        <h2>Core Endpoints</h2>
+        <pre><code>POST   /v1/agents
+GET    /v1/agents/{agent_id}
+GET    /v1/dids/{did}
+POST   /v1/agents/{agent_id}/keys
+POST   /v1/agents/{agent_id}/credentials
+POST   /v1/agents/{agent_id}/capabilities
+GET    /v1/agents/{agent_id}/trust
+POST   /v1/revocations
+GET    /v1/audit-events</code></pre>
+      </section>
+
+      <section class="section split">
+        <div>
+          <span class="eyebrow">Example</span>
+          <h2>Create Agent</h2>
+        </div>
+        <pre><code>POST /v1/agents
+{
+  "name": "Research Agent",
+  "agent_type": "research",
+  "model_provider": "openai",
+  "model_name": "gpt-5.5"
+}</code></pre>
+      </section>
+
+      <section class="section split">
+        <div>
+          <span class="eyebrow">Example</span>
+          <h2>Response</h2>
+        </div>
+        <pre><code>{
+  "id": "7be23bb1-...",
+  "did": "did:agennext:agent:7be23bb1-...",
+  "status": "draft"
+}</code></pre>
+      </section>
+    </main>
+
+    <footer>
+      <p>© AgenNext. API reference.</p>
+    </footer>
+  </body>
+</html>
