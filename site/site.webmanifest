@@ -1,0 +1,10 @@
+{
+  "name": "AgenNext Agent Identity",
+  "short_name": "Agent Identity",
+  "description": "Persistent, verifiable identity for autonomous AI agents.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b1020",
+  "theme_color": "#6ea8fe",
+  "icons": []
+}
