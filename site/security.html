@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Security & Trust Model | Agent Identity</title>
+  <meta name="description" content="Security and trust model for AgenNext Agent Identity." />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+<header class="nav">
+  <a class="brand" href="./index.html">Agent Identity</a>
+  <nav>
+    <a href="./index.html">Home</a>
+    <a href="./docs.html">Docs</a>
+    <a href="./api.html">API</a>
+    <a href="./sdk.html">SDK</a>
+    <a href="./security.html">Security</a>
+    <a class="button small" href="https://github.com/AGenNext/Agent-Identity">GitHub</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero compact">
+    <div class="eyebrow">Security & Trust</div>
+    <h1>Identity assurance for autonomous agents.</h1>
+    <p class="lede">Agent Identity is designed around verifiable identifiers, signed credentials, key rotation, revocation, capability scoping, reputation, and auditability.</p>
+  </section>
+
+  <section class="section split">
+    <div>
+      <span class="eyebrow">Principle</span>
+      <h2>Cryptographic identity</h2>
+      <p>Each agent is represented by a stable DID and one or more verification keys. Services should verify signatures against the active DID document before trusting claims.</p>
+    </div>
+    <pre><code>Agent DID
+  └── DID Document
+        ├── verificationMethod
+        ├── authentication
+        ├── assertionMethod
+        └── capabilityInvocation</code></pre>
+  </section>
+
+  <section class="section split">
+    <div>
+      <span class="eyebrow">Principle</span>
+      <h2>Least privilege capabilities</h2>
+      <p>Capabilities should be scoped by resource, action, validity window, and contextual constraints such as tenant, environment, region, or maximum usage rate.</p>
+    </div>
+    <pre><code>{
+  "capability": "document.read",
+  "resource": "papers",
+  "action": "read",
+  "constraints": {
+    "tenant_id": "tenant_123",
+    "max_requests_per_hour": 100
+  }
+}</code></pre>
+  </section>
+
+  <section class="section">
+    <span class="eyebrow">Verification Flow</span>
+    <h2>Before trusting an agent</h2>
+    <div class="architecture">
+      <div>1. Resolve DID</div>
+      <div>2. Validate key status</div>
+      <div>3. Verify signature</div>
+      <div>4. Check credential expiry</div>
+      <div>5. Check revocation registry</div>
+      <div>6. Evaluate capabilities</div>
+      <div>7. Review trust score</div>
+      <div>8. Write audit event</div>
+    </div>
+  </section>
+
+  <section class="section split">
+    <div>
+      <span class="eyebrow">Revocation</span>
+      <h2>Compromise response</h2>
+      <p>Credentials, keys, grants, and agents should be revocable. Downstream systems should treat revocation checks as mandatory for sensitive operations.</p>
+    </div>
+    <pre><code>POST /v1/revocations
+{
+  "target_type": "credential",
+  "target_id": "urn:uuid:...",
+  "reason": "Credential compromised"
+}</code></pre>
+  </section>
+
+  <section class="section split">
+    <div>
+      <span class="eyebrow">Auditability</span>
+      <h2>Every identity event should be traceable</h2>
+      <p>Agent creation, key rotation, credential issuance, trust recalculation, capability grants, and revocations should all produce audit events.</p>
+    </div>
+    <pre><code>agent.created
+key.rotated
+credential.issued
+capability.granted
+credential.revoked
+trust.recalculated</code></pre>
+  </section>
+
+  <section class="cta">
+    <h2>Trust should be verified, scoped, revocable, and observable.</h2>
+    <p>Agent Identity provides the foundation for secure agent-to-tool and agent-to-agent interactions.</p>
+    <a class="button" href="./api.html">View API Reference</a>
+  </section>
+</main>
+
+<footer><p>© AgenNext. Security and trust model.</p></footer>
+</body>
+</html>
