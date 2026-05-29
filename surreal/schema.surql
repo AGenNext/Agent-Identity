@@ -1,3 +1,4 @@
+-- AGenNext Agent Identity: base namespace and database bootstrap.
 DEFINE NAMESPACE agent_identity;
 DEFINE DATABASE dev;
 

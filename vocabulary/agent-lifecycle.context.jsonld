@@ -1,0 +1,29 @@
+{
+  "$comment": "JSON-LD context mapping the Agent Identity vocabulary onto schema.org and the W3C DID 1.1 context. Lifecycle vocabulary grounded in 'Identity Management for Agentic AI' (OpenID Foundation, Oct 2025); DID property names grounded in W3C DID 1.1 (https://www.w3.org/TR/did-1.1/). A did_document record uses the W3C DID context directly; an agent_lifecycle record uses the schema.org mappings below.",
+  "@context": [
+    "https://www.w3.org/ns/did/v1.1",
+    {
+    "@vocab": "https://schema.org/",
+    "agennext": "https://identity.agennext.dev/vocab#",
+    "AgentIdentity": "SoftwareApplication",
+    "LifecycleAuditLog": "UpdateAction",
+    "identity": { "@id": "identifier" },
+    "state": { "@id": "actionStatus" },
+    "owners": { "@id": "owner" },
+    "entitlements": { "@id": "permissions" },
+    "actor": { "@id": "agent" },
+    "principal": { "@id": "participant" },
+    "reason": { "@id": "description" },
+    "created_at": { "@id": "dateCreated", "@type": "DateTime" },
+    "updated_at": { "@id": "dateModified", "@type": "DateTime" },
+    "entered_state_at": { "@id": "startTime", "@type": "DateTime" },
+    "from_state": { "@id": "agennext:fromState" },
+    "to_state": { "@id": "agennext:toState" },
+    "trigger": { "@id": "agennext:trigger" },
+    "provisioned": "PotentialActionStatus",
+    "active": "ActiveActionStatus",
+    "revoked": "FailedActionStatus",
+    "deprovisioned": "CompletedActionStatus"
+    }
+  ]
+}
