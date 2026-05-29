@@ -224,6 +224,33 @@ would let agents be described as first-class identities with governed attributes
 of this into the enforced vocabulary requires adding it to
 `vocabulary/agent-lifecycle.vocabulary.json` with a real `source` first.
 
+### SailPoint Identity Security Cloud API v3 — important entries (background)
+
+SailPoint is an Identity Governance and Administration (IGA) platform. Its v3 API is a strong
+real-world model for the *governance* side of the agent lifecycle (entitlements, access
+reviews, provisioning) that the whitepaper calls for (§2.12 IGA, §2.9 SCIM). Background only,
+not enforced vocabulary. Source:
+[SailPoint API v3](https://developer.sailpoint.com/docs/api/v3/) (reflects SailPoint's
+documented model).
+
+| Entry | Plain English | Maps to (agent identity) |
+| --- | --- | --- |
+| Sources | The connected systems where accounts live. | Trust domains / downstream tools an agent reaches. |
+| Accounts | The actual login records on a source. | An agent's credential on a given system. |
+| Identities | The person (or agent) that owns accounts and access. | `agent_identity`. |
+| Entitlements | The finest-grained units of access on a source. | `entitlements` on `agent_lifecycle`. |
+| Access Profiles | Bundles of entitlements granted together. | Reusable permission bundles for agents. |
+| Roles | Bundles of access profiles for a job function. | An agent's role/skill bundle. |
+| Access Requests | The flow to request and approve access. | Granting an agent new entitlements (permission updates). |
+| Provisioning | Pushing access changes out to systems. | Activating / updating an agent's access. |
+| Certifications (Campaigns) | Periodic reviews where owners re-approve access. | Periodic review of an agent's entitlements and owners. |
+| Identity Profiles | Rules for how identities and their attributes are shaped. | Attribute/governance rules for agents. |
+
+These line up with the lifecycle: **provisioning** (Provisioning), **permission updates**
+(Access Requests, Entitlements, Access Profiles, Roles), **review** (Certifications), and
+**de-provisioning** (removing accounts and entitlements). Promoting any term into the enforced
+vocabulary requires adding it to `vocabulary/agent-lifecycle.vocabulary.json` with a `source`.
+
 ## Keeping it grounded
 
 If you want to add a new word to this vocabulary, you must:
