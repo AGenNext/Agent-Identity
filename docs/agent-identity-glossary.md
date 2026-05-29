@@ -126,6 +126,45 @@ along the chain), agents **act on behalf of** people, and agents **operate in** 
 Every lifecycle change is **audited**. You can walk these arrows with the graph queries in
 `surreal/queries/agent_graph.queries.surql`.
 
+## Knowledge graph (governance)
+
+Okta and SailPoint together give us the **governance knowledge graph**: who an agent is, what
+access it has, and how that access is bundled and reviewed. These nodes and edges are grounded
+in the SailPoint v3 and Okta Schema APIs and are real, enforced vocabulary (see
+`surreal/schema/agent_knowledge_graph.surql`). Every node/edge is also a JSON-LD predicate in
+the context file.
+
+**Nodes**
+
+| Node | Plain English | Source |
+| --- | --- | --- |
+| `source` | A connected system where accounts live. | SailPoint v3 Sources |
+| `account` | A login record on a source. | SailPoint v3 Accounts |
+| `entitlement` | The smallest unit of access on a source. | SailPoint v3 Entitlements |
+| `access_profile` | A bundle of entitlements granted together. | SailPoint v3 Access Profiles |
+| `role` | A bundle of access profiles for a job function. | SailPoint v3 Roles |
+| `safe` | A container that holds privileged accounts/credentials. | CyberArk Safes (PAM) |
+| `schema_attribute` | A governed attribute definition (type, required, mutability, permissions, master). | Okta Schema property |
+
+**Edges**
+
+| Edge | Plain English | Direction | Source |
+| --- | --- | --- | --- |
+| `holds_account` | An agent holds an account. | agent → account | SailPoint v3 |
+| `account_on_source` | An account lives on a source. | account → source | SailPoint v3 |
+| `stored_in` | A privileged account is stored in a safe. | account → safe | CyberArk PAM |
+| `entitlement_on_source` | An entitlement is defined on a source. | entitlement → source | SailPoint v3 |
+| `profile_grants` | An access profile grants entitlements. | access_profile → entitlement | SailPoint v3 |
+| `role_includes` | A role includes access profiles. | role → access_profile | SailPoint v3 |
+| `assigned_access` | An agent is assigned an access profile. | agent → access_profile | SailPoint v3 |
+| `assigned_role` | An agent is assigned a role. | agent → role | SailPoint v3 |
+| `has_attribute` | An agent has a governed attribute. | agent → schema_attribute | Okta Schema |
+
+In plain English: an agent **holds accounts** on **sources**; access on a source is an
+**entitlement**; entitlements are bundled into **access profiles**, which are bundled into
+**roles**; an agent is **assigned** access profiles and roles; and Okta-style **schema
+attributes** describe the agent's governed fields.
+
 ## Whitepaper key terms (background)
 
 These terms come straight from the *Key Terms and Acronyms* table of the source whitepaper

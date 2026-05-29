@@ -13,8 +13,49 @@
       "publisher": "W3C",
       "url": "https://www.w3.org/TR/did-1.1/",
       "usedFor": "Exact DID document property names (§5 Core Properties). The concept of DIDs is grounded in the OpenID whitepaper §3.1 'Sovereign and Portable Agent Identity'."
+    },
+    {
+      "title": "Identity Security Cloud API v3",
+      "publisher": "SailPoint",
+      "url": "https://developer.sailpoint.com/docs/api/v3/",
+      "usedFor": "Knowledge-graph governance nodes/edges (sources, accounts, entitlements, access profiles, roles). The IGA concept is grounded in the OpenID whitepaper §2.12 and §2.9 SCIM."
+    },
+    {
+      "title": "Management Schema API",
+      "publisher": "Okta",
+      "url": "https://developer.okta.com/docs/api/openapi/okta-management/management/tags/schema",
+      "usedFor": "Governed attribute definition fields (type, required, mutability, permissions, master) on the knowledge-graph schema_attribute node."
+    },
+    {
+      "title": "CyberArk API",
+      "publisher": "CyberArk",
+      "url": "https://api-docs.cyberark.com/",
+      "usedFor": "Privileged Access Management nodes: Safes that hold privileged accounts/credentials (knowledge-graph safe node and stored_in edge)."
     }
   ],
+  "knowledgeGraph": {
+    "$comment": "Governance knowledge graph promoted from SailPoint IGA + Okta Schema. Every node/edge must appear in surreal/schema/agent_knowledge_graph.surql.",
+    "nodes": [
+      { "term": "source", "definition": "A connected system where accounts live.", "source": "SailPoint v3 Sources", "schemaOrg": { "type": "agennext:Source" } },
+      { "term": "account", "definition": "A login record on a source.", "source": "SailPoint v3 Accounts", "schemaOrg": { "type": "agennext:Account" } },
+      { "term": "entitlement", "definition": "The finest-grained unit of access on a source.", "source": "SailPoint v3 Entitlements", "schemaOrg": { "type": "agennext:Entitlement" } },
+      { "term": "access_profile", "definition": "A bundle of entitlements granted together.", "source": "SailPoint v3 Access Profiles", "schemaOrg": { "type": "agennext:AccessProfile" } },
+      { "term": "role", "definition": "A bundle of access profiles for a job function.", "source": "SailPoint v3 Roles", "schemaOrg": { "type": "Role", "url": "https://schema.org/Role" } },
+      { "term": "safe", "definition": "A container that holds privileged accounts/credentials.", "source": "CyberArk Safes (PAM)", "schemaOrg": { "type": "agennext:Safe" } },
+      { "term": "schema_attribute", "definition": "A governed attribute definition.", "source": "Okta Schema property fields", "schemaOrg": { "type": "PropertyValue", "url": "https://schema.org/PropertyValue" } }
+    ],
+    "edges": [
+      { "term": "holds_account", "definition": "An agent identity holds an account.", "source": "SailPoint v3 (identities own accounts)" },
+      { "term": "account_on_source", "definition": "An account lives on a source.", "source": "SailPoint v3 Accounts/Sources" },
+      { "term": "stored_in", "definition": "A privileged account is stored in a safe.", "source": "CyberArk PAM (Safes)" },
+      { "term": "entitlement_on_source", "definition": "An entitlement is defined on a source.", "source": "SailPoint v3 Entitlements" },
+      { "term": "profile_grants", "definition": "An access profile grants entitlements.", "source": "SailPoint v3 Access Profiles" },
+      { "term": "role_includes", "definition": "A role includes access profiles.", "source": "SailPoint v3 Roles" },
+      { "term": "assigned_access", "definition": "An agent is assigned an access profile.", "source": "SailPoint v3 Access Requests/assignment" },
+      { "term": "assigned_role", "definition": "An agent is assigned a role.", "source": "SailPoint v3 Roles" },
+      { "term": "has_attribute", "definition": "An agent has a governed attribute.", "source": "Okta Schema property" }
+    ]
+  },
   "schemaOrgContext": "https://schema.org",
   "didContext": "https://www.w3.org/ns/did/v1.1",
   "did": [

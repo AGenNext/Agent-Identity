@@ -24,6 +24,7 @@ VOCAB = ROOT / "vocabulary" / "agent-lifecycle.vocabulary.json"
 GLOSSARY = ROOT / "docs" / "agent-identity-glossary.md"
 SCHEMA = ROOT / "surreal" / "schema" / "agent_lifecycle.surql"
 DID_SCHEMA = ROOT / "surreal" / "schema" / "agent_did.surql"
+KG_SCHEMA = ROOT / "surreal" / "schema" / "agent_knowledge_graph.surql"
 CONTEXT = ROOT / "vocabulary" / "agent-lifecycle.context.jsonld"
 
 errors: list[str] = []
@@ -104,6 +105,9 @@ def main() -> int:
     require_sources(vocab.get("triggers", []), "Trigger")
     require_sources(vocab.get("attributes", []), "Attribute")
     require_sources(vocab.get("did", []), "DID property")
+    kg = vocab.get("knowledgeGraph", {})
+    require_sources(kg.get("nodes", []), "Knowledge-graph node")
+    require_sources(kg.get("edges", []), "Knowledge-graph edge")
 
     vocab_states = [s["term"] for s in vocab.get("states", [])]
     vocab_states_set = set(vocab_states)
@@ -169,6 +173,20 @@ def main() -> int:
             for term in did_terms:
                 if not re.search(rf'DEFINE FIELD {re.escape(term)} ON TABLE', did_schema_text):
                     err(f"DID property `{term}` is in the vocabulary but not defined in agent_did.surql.")
+
+    # --- knowledge-graph nodes/edges must be DEFINE TABLEs and in the glossary ---
+    kg_terms = [n["term"] for n in kg.get("nodes", [])] + [e["term"] for e in kg.get("edges", [])]
+    if kg_terms:
+        if not KG_SCHEMA.exists():
+            err("Required file is missing: surreal/schema/agent_knowledge_graph.surql")
+        else:
+            kg_schema_text = KG_SCHEMA.read_text()
+            for term in kg_terms:
+                if not re.search(rf'DEFINE TABLE {re.escape(term)} ', kg_schema_text):
+                    err(f"Knowledge-graph term `{term}` is in the vocabulary but not a DEFINE TABLE in agent_knowledge_graph.surql.")
+        for term in kg_terms:
+            if f"`{term}`" not in glossary_text:
+                err(f"Glossary is missing knowledge-graph term `{term}`.")
 
     return report()
 
