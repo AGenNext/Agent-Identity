@@ -27,6 +27,8 @@ imp surreal/schema/agent_knowledge_graph.surql
 # Seeds (these UPDATE the lifecycle, exercising the guard + audit DEFINE EVENTs).
 imp surreal/seeds/agent_identity.seed.surql
 imp surreal/seeds/agent_lifecycle.seed.surql
+# Graph + knowledge-graph seed (exercises the RELATION edges).
+imp surreal/seeds/agent_graph.seed.surql
 
 echo ">> positive path: seeded lifecycle should be 'active'"
 STATE_OUT=$(echo 'SELECT VALUE state FROM agent_lifecycle:research_agent;' \
@@ -47,4 +49,11 @@ echo "$GUARD_OUT"
 echo "$GUARD_OUT" | grep -qi "Illegal lifecycle transition" \
   || { echo "FAIL: transition guard did not reject the illegal move"; exit 1; }
 
-echo "✅ SurrealDB smoke test passed (schema loads, events fire, guard enforces grammar)."
+echo ">> graph path: research_agent should delegate to one agent"
+GRAPH_OUT=$(echo 'SELECT ->delegates_to->agent_identity.subject AS d FROM agent_identity:research_agent;' \
+  | surreal sql "${AUTH[@]}" --namespace "$NS" --database "$DB" --json)
+echo "$GRAPH_OUT"
+echo "$GRAPH_OUT" | grep -q 'summary-agent' \
+  || { echo "FAIL: expected delegates_to edge to summary-agent"; exit 1; }
+
+echo "✅ SurrealDB smoke test passed (schema loads, events fire, guard enforces grammar, graph traverses)."

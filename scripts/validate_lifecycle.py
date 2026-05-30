@@ -26,6 +26,7 @@ SCHEMA = ROOT / "surreal" / "schema" / "agent_lifecycle.surql"
 DID_SCHEMA = ROOT / "surreal" / "schema" / "agent_did.surql"
 KG_SCHEMA = ROOT / "surreal" / "schema" / "agent_knowledge_graph.surql"
 CONTEXT = ROOT / "vocabulary" / "agent-lifecycle.context.jsonld"
+EXAMPLE = ROOT / "vocabulary" / "examples" / "agent.example.jsonld"
 
 errors: list[str] = []
 
@@ -187,6 +188,27 @@ def main() -> int:
         for term in kg_terms:
             if f"`{term}`" not in glossary_text:
                 err(f"Glossary is missing knowledge-graph term `{term}`.")
+
+    # --- JSON-LD example must only use keys defined in the context ----------------
+    if EXAMPLE.exists():
+        example = load_json(EXAMPLE)
+        ctx = load_json(CONTEXT).get("@context", [])
+        defined: set[str] = set()
+        for part in ctx if isinstance(ctx, list) else [ctx]:
+            if isinstance(part, dict):
+                defined.update(part.keys())
+        # JSON-LD keywords and the documentation key are always allowed.
+        allowed = defined | {"@context", "@type", "@id", "@vocab", "name", "value", "$comment"}
+        def check_keys(obj: object) -> None:
+            if isinstance(obj, dict):
+                for key, val in obj.items():
+                    if not key.startswith("@") and key not in allowed:
+                        err(f"JSON-LD example uses key `{key}` not defined in the context.")
+                    check_keys(val)
+            elif isinstance(obj, list):
+                for item in obj:
+                    check_keys(item)
+        check_keys(example)
 
     return report()
 

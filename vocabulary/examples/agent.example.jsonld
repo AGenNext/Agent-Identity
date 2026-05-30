@@ -1,0 +1,31 @@
+{
+  "$comment": "Example: a single agent identity serialized as JSON-LD using the project context. Demonstrates that lifecycle, DID, graph, and knowledge-graph vocabulary all resolve through vocabulary/agent-lifecycle.context.jsonld. This is illustrative data, not enforced vocabulary.",
+  "@context": "../agent-lifecycle.context.jsonld",
+  "@type": "AgentIdentity",
+  "identity": "agent:research-agent",
+  "state": "active",
+  "owners": ["AGenNext"],
+  "entitlements": ["agent.identity", "agent.registry.read"],
+  "operates_in": "trust_domain:agennext_public_registry",
+  "delegates_to": {
+    "@id": "agent:summary-agent",
+    "scope": ["agent.registry.read"],
+    "attenuated": true
+  },
+  "acts_on_behalf_of": {
+    "principal": "user:alice",
+    "scope": ["research"]
+  },
+  "assigned_role": "role:analyst",
+  "assigned_access": "access_profile:crm-reader",
+  "holds_account": {
+    "@id": "account:research-agent@crm",
+    "account_on_source": "source:crm",
+    "stored_in": "safe:crm-secrets"
+  },
+  "has_attribute": {
+    "@type": "PropertyValue",
+    "name": "agent_model",
+    "value": "claude"
+  }
+}
