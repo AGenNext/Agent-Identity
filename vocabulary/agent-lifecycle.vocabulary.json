@@ -1,0 +1,175 @@
+{
+  "$comment": "Single source of truth for the Agent Identity lifecycle controlled vocabulary. All terms are grounded in 'Identity Management for Agentic AI' (OpenID Foundation, Tobin South, October 2025). The repo-level validator (scripts/validate_lifecycle.py) enforces that surreal/*.surql uses only this vocabulary and that the state grammar matches the schema. No term may be introduced from outside the source document.",
+  "source": {
+    "title": "Identity Management for Agentic AI",
+    "publisher": "OpenID Foundation",
+    "editor": "Tobin South",
+    "date": "2025-10",
+    "url": "https://openid.net/"
+  },
+  "additionalSources": [
+    {
+      "title": "Decentralized Identifiers (DIDs) v1.1",
+      "publisher": "W3C",
+      "url": "https://www.w3.org/TR/did-1.1/",
+      "usedFor": "Exact DID document property names (§5 Core Properties). The concept of DIDs is grounded in the OpenID whitepaper §3.1 'Sovereign and Portable Agent Identity'."
+    },
+    {
+      "title": "Identity Security Cloud API v3",
+      "publisher": "SailPoint",
+      "url": "https://developer.sailpoint.com/docs/api/v3/",
+      "usedFor": "Knowledge-graph governance nodes/edges (sources, accounts, entitlements, access profiles, roles). The IGA concept is grounded in the OpenID whitepaper §2.12 and §2.9 SCIM."
+    },
+    {
+      "title": "Management Schema API",
+      "publisher": "Okta",
+      "url": "https://developer.okta.com/docs/api/openapi/okta-management/management/tags/schema",
+      "usedFor": "Governed attribute definition fields (type, required, mutability, permissions, master) on the knowledge-graph schema_attribute node."
+    },
+    {
+      "title": "CyberArk API",
+      "publisher": "CyberArk",
+      "url": "https://api-docs.cyberark.com/",
+      "usedFor": "Privileged Access Management nodes: Safes that hold privileged accounts/credentials (knowledge-graph safe node and stored_in edge)."
+    }
+  ],
+  "knowledgeGraph": {
+    "$comment": "Governance knowledge graph promoted from SailPoint IGA + Okta Schema. Every node/edge must appear in surreal/schema/agent_knowledge_graph.surql.",
+    "nodes": [
+      { "term": "source", "definition": "A connected system where accounts live.", "source": "SailPoint v3 Sources", "schemaOrg": { "type": "agennext:Source" } },
+      { "term": "account", "definition": "A login record on a source.", "source": "SailPoint v3 Accounts", "schemaOrg": { "type": "agennext:Account" } },
+      { "term": "entitlement", "definition": "The finest-grained unit of access on a source.", "source": "SailPoint v3 Entitlements", "schemaOrg": { "type": "agennext:Entitlement" } },
+      { "term": "access_profile", "definition": "A bundle of entitlements granted together.", "source": "SailPoint v3 Access Profiles", "schemaOrg": { "type": "agennext:AccessProfile" } },
+      { "term": "role", "definition": "A bundle of access profiles for a job function.", "source": "SailPoint v3 Roles", "schemaOrg": { "type": "Role", "url": "https://schema.org/Role" } },
+      { "term": "safe", "definition": "A container that holds privileged accounts/credentials.", "source": "CyberArk Safes (PAM)", "schemaOrg": { "type": "agennext:Safe" } },
+      { "term": "schema_attribute", "definition": "A governed attribute definition.", "source": "Okta Schema property fields", "schemaOrg": { "type": "PropertyValue", "url": "https://schema.org/PropertyValue" } }
+    ],
+    "edges": [
+      { "term": "holds_account", "definition": "An agent identity holds an account.", "source": "SailPoint v3 (identities own accounts)" },
+      { "term": "account_on_source", "definition": "An account lives on a source.", "source": "SailPoint v3 Accounts/Sources" },
+      { "term": "stored_in", "definition": "A privileged account is stored in a safe.", "source": "CyberArk PAM (Safes)" },
+      { "term": "entitlement_on_source", "definition": "An entitlement is defined on a source.", "source": "SailPoint v3 Entitlements" },
+      { "term": "profile_grants", "definition": "An access profile grants entitlements.", "source": "SailPoint v3 Access Profiles" },
+      { "term": "role_includes", "definition": "A role includes access profiles.", "source": "SailPoint v3 Roles" },
+      { "term": "assigned_access", "definition": "An agent is assigned an access profile.", "source": "SailPoint v3 Access Requests/assignment" },
+      { "term": "assigned_role", "definition": "An agent is assigned a role.", "source": "SailPoint v3 Roles" },
+      { "term": "has_attribute", "definition": "An agent has a governed attribute.", "source": "Okta Schema property" }
+    ]
+  },
+  "schemaOrgContext": "https://schema.org",
+  "didContext": "https://www.w3.org/ns/did/v1.1",
+  "did": [
+    { "term": "id", "definition": "The DID subject (the identifier itself).", "source": "W3C DID 1.1 §5.1.1; concept: OpenID whitepaper §3.1" },
+    { "term": "controller", "definition": "The entity that controls the DID document.", "source": "W3C DID 1.1 §5.1.2" },
+    { "term": "alsoKnownAs", "definition": "Other identifiers for the same subject.", "source": "W3C DID 1.1 §5.1.3" },
+    { "term": "verificationMethod", "definition": "Cryptographic material used to authenticate or authorize.", "source": "W3C DID 1.1 §5.2" },
+    { "term": "authentication", "definition": "Verification relationship for proving control of the DID.", "source": "W3C DID 1.1 §5.3.1" },
+    { "term": "assertionMethod", "definition": "Verification relationship for issuing verifiable claims.", "source": "W3C DID 1.1 §5.3.2" },
+    { "term": "keyAgreement", "definition": "Verification relationship for establishing shared keys.", "source": "W3C DID 1.1 §5.3.3" },
+    { "term": "capabilityInvocation", "definition": "Verification relationship for invoking a capability.", "source": "W3C DID 1.1 §5.3.4" },
+    { "term": "capabilityDelegation", "definition": "Verification relationship for delegating a capability.", "source": "W3C DID 1.1 §5.3.5" },
+    { "term": "service", "definition": "A service endpoint associated with the DID subject.", "source": "W3C DID 1.1 §5.4" }
+  ],
+  "states": [
+    {
+      "term": "provisioned",
+      "definition": "The agent identity has been created and registered but is not yet operating.",
+      "source": "§2.9 SSO & Provisioning ('agent provisioning'); §3.7 ('from provisioning to ... de-provisioning')",
+      "schemaOrg": {
+        "type": "ActionStatusType",
+        "value": "PotentialActionStatus",
+        "url": "https://schema.org/PotentialActionStatus"
+      }
+    },
+    {
+      "term": "active",
+      "definition": "The agent has active credentials and an active session, operating in production.",
+      "source": "Key Terms, 'Revocation' ('an agent's active credentials ... current session')",
+      "schemaOrg": {
+        "type": "ActionStatusType",
+        "value": "ActiveActionStatus",
+        "url": "https://schema.org/ActiveActionStatus"
+      }
+    },
+    {
+      "term": "revoked",
+      "definition": "The agent's active credentials are invalidated and its current session terminated; the underlying registration may still exist.",
+      "source": "Key Terms, 'Revocation'; §3.2 'The Revocation Challenge'",
+      "schemaOrg": {
+        "type": "ActionStatusType",
+        "value": "FailedActionStatus",
+        "url": "https://schema.org/FailedActionStatus"
+      }
+    },
+    {
+      "term": "deprovisioned",
+      "definition": "The formal and permanent removal of the agent's identity and all associated entitlements from all systems; the final step in its lifecycle.",
+      "source": "Key Terms, 'De-provisioning'; §3.2 'De-provisioning & Off-boarding'",
+      "schemaOrg": {
+        "type": "ActionStatusType",
+        "value": "CompletedActionStatus",
+        "url": "https://schema.org/CompletedActionStatus"
+      }
+    }
+  ],
+  "grammar": {
+    "$comment": "Lifecycle state grammar (the state machine). Each key is a state; the array lists permitted next states. This MUST match fn::lifecycle_next_states in surreal/schema/agent_lifecycle.surql.",
+    "transitions": {
+      "provisioned": ["active", "deprovisioned"],
+      "active": ["revoked", "deprovisioned"],
+      "revoked": ["deprovisioned"],
+      "deprovisioned": []
+    }
+  },
+  "triggers": [
+    {
+      "term": "security_alert",
+      "definition": "A security alert event that initiates revocation or de-provisioning.",
+      "source": "§3.2 ('triggered by an event like a security alert')"
+    },
+    {
+      "term": "compromise",
+      "definition": "The agent identity is suspected or known to be compromised.",
+      "source": "§3.2 ('a compromise or end-of-life event'); 'De-provisioning is the ultimate response to a compromise')"
+    },
+    {
+      "term": "end_of_life",
+      "definition": "The agent has reached the end of its operational life and is decommissioned.",
+      "source": "§3.2 ('a compromise or end-of-life event')"
+    }
+  ],
+  "attributes": [
+    {
+      "term": "owners",
+      "definition": "The accountable owners of the agent identity.",
+      "source": "§2.9 ('its own attributes, owners, and group memberships')",
+      "schemaOrg": { "property": "owner", "url": "https://schema.org/owns" }
+    },
+    {
+      "term": "entitlements",
+      "definition": "The access rights associated with the agent identity.",
+      "source": "§2.9 ('all its associated entitlements are irrevocably purged'); §3.2",
+      "schemaOrg": { "property": "permissions", "url": "https://schema.org/permissions" }
+    },
+    {
+      "term": "actor",
+      "definition": "The acting party (agent) to whom authority has been delegated.",
+      "source": "§2.11 ('the act (actor) claim ... identify the acting party')",
+      "schemaOrg": { "property": "agent", "url": "https://schema.org/agent" }
+    },
+    {
+      "term": "principal",
+      "definition": "The human principal who granted authority.",
+      "source": "§2.11 ('distinct identifiers for both the human principal and the agent actor')",
+      "schemaOrg": { "property": "participant", "url": "https://schema.org/participant" }
+    }
+  ],
+  "objects": {
+    "agent_identity": {
+      "schemaOrg": { "type": "SoftwareApplication", "url": "https://schema.org/SoftwareApplication" }
+    },
+    "lifecycle_audit_log": {
+      "schemaOrg": { "type": "UpdateAction", "url": "https://schema.org/UpdateAction" }
+    }
+  }
+}

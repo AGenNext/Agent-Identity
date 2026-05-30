@@ -1,3 +1,4 @@
+-- AGenNext Agent Identity: base seed data.
 USE NS agent_identity DB dev;
 
 CREATE agent:research_assistant CONTENT {

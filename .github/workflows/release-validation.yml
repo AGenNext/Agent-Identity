@@ -1,0 +1,25 @@
+name: Release Validation
+
+on:
+  push:
+    tags:
+      - 'v*'
+  release:
+    types: [created, published]
+  workflow_dispatch:
+
+jobs:
+  validate-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run repo-level release validation gate
+        run: python scripts/validate_release.py

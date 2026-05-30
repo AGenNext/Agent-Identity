@@ -1,0 +1,26 @@
+name: Lifecycle Vocabulary Validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate-vocabulary:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validate JSON-LD context and vocabulary parse
+        run: |
+          python -c "import json,sys; json.load(open('vocabulary/agent-lifecycle.vocabulary.json')); json.load(open('vocabulary/agent-lifecycle.context.jsonld')); print('JSON parses OK')"
+
+      - name: Validate lifecycle vocabulary, grammar, and source grounding
+        run: python scripts/validate_lifecycle.py
