@@ -1,0 +1,44 @@
+# Rust build artifacts
+/target/
+**/target/
+*.rs.bk
+Cargo.lock
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temp files
+*.tmp
+*.bak
+*.swp
+
+# Local config
+.env
+.env.local
+
+# SurrealDB
+*.db
+*.surrealdb/

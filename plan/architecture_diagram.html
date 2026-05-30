@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Identity & Lifecycle System - Architecture</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 40px;
+            color: #e0e0e0;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #00d4ff;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 40px;
+            font-size: 0.9rem;
+        }
+        
+        .diagram-section {
+            margin-bottom: 60px;
+        }
+        
+        .diagram-title {
+            color: #ffd700;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .diagram-container {
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            padding: 30px;
+            overflow-x: auto;
+        }
+        
+        /* Lifecycle State Diagram */
+        .lifecycle-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+        
+        .state-box {
+            width: 140px;
+            height: 80px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .state-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .state-created {
+            background: linear-gradient(135deg, #4a4a6a 0%, #3a3a5a 100%);
+            border: 2px solid #6a6a8a;
+        }
+        
+        .state-provisioned {
+            background: linear-gradient(135deg, #1a4a6a 0%, #0a3a5a 100%);
+            border: 2px solid #00aaff;
+        }
+        
+        .state-active {
+            background: linear-gradient(135deg, #1a6a4a 0%, #0a5a3a 100%);
+            border: 2px solid #00ff88;
+            box-shadow: 0 0 20px rgba(0,255,136,0.3);
+        }
+        
+        .state-suspended {
+            background: linear-gradient(135deg, #6a4a1a 0%, #5a3a0a 100%);
+            border: 2px solid #ffaa00;
+        }
+        
+        .state-revoked {
+            background: linear-gradient(135deg, #6a1a1a 0%, #5a0a0a 100%);
+            border: 2px solid #ff4444;
+        }
+        
+        .state-deleted {
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            border: 2px solid #555;
+            opacity: 0.6;
+        }
+        
+        .arrow {
+            color: #00d4ff;
+            font-size: 1.5rem;
+        }
+        
+        .arrow-back {
+            color: #ff6b6b;
+            font-size: 1.2rem;
+        }
+        
+        /* Delegation Chain Diagram */
+        .delegation-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+        
+        .actor-box {
+            padding: 15px 20px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 120px;
+        }
+        
+        .actor-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+        
+        .actor-name {
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        
+        .actor-scopes {
+            font-size: 0.7rem;
+            margin-top: 5px;
+            color: #aaa;
+            max-width: 100px;
+        }
+        
+        .actor-user {
+            background: linear-gradient(135deg, #3a5a8a 0%, #2a4a7a 100%);
+            border: 2px solid #5a8ac8;
+        }
+        
+        .actor-primary {
+            background: linear-gradient(135deg, #5a3a8a 0%, #4a2a7a 100%);
+            border: 2px solid #8a5ac8;
+        }
+        
+        .actor-sub {
+            background: linear-gradient(135deg, #5a8a3a 0%, #4a7a2a 100%);
+            border: 2px solid #8ac85a;
+        }
+        
+        .actor-resource {
+            background: linear-gradient(135deg, #8a5a5a 0%, #7a4a4a 100%);
+            border: 2px solid #c88a8a;
+        }
+        
+        .scope-arrow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .scope-label {
+            font-size: 0.65rem;
+            color: #ffd700;
+            background: rgba(255,215,0,0.1);
+            padding: 3px 8px;
+            border-radius: 10px;
+        }
+        
+        .delegation-arrow {
+            color: #aaa;
+            font-size: 1.2rem;
+        }
+        
+        /* Component Architecture Diagram */
+        .architecture-diagram {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .component-box {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #333;
+        }
+        
+        .component-title {
+            color: #00d4ff;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .component-icon {
+            font-size: 1.2rem;
+        }
+        
+        .function-list {
+            list-style: none;
+        }
+        
+        .function-list li {
+            padding: 6px 0;
+            font-size: 0.8rem;
+            color: #b0b0b0;
+            border-bottom: 1px solid #222;
+        }
+        
+        .function-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .function-list li::before {
+            content: "→ ";
+            color: #00ff88;
+        }
+        
+        /* Token Flow */
+        .token-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+        
+        .token-box {
+            background: linear-gradient(135deg, #2a2a4a 0%, #1a1a3a 100%);
+            border: 2px solid #6a6a9a;
+            border-radius: 10px;
+            padding: 15px 20px;
+            min-width: 150px;
+            text-align: center;
+        }
+        
+        .token-type {
+            color: #ff88ff;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .token-scopes {
+            font-size: 0.7rem;
+            color: #aaa;
+        }
+        
+        .flow-arrow {
+            color: #00d4ff;
+            font-size: 1.5rem;
+        }
+        
+        /* Legend */
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 10px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #888;
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+        
+        /* Animated Pulse for Active */
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(0,255,136,0.3); }
+            50% { box-shadow: 0 0 35px rgba(0,255,136,0.5); }
+        }
+        
+        .state-active {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            body { padding: 20px; }
+            h1 { font-size: 1.5rem; }
+            .state-box { width: 110px; height: 70px; font-size: 0.75rem; }
+            .arrow { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <h1>🔐 Agent Identity & Lifecycle System</h1>
+    <p class="subtitle">Architecture based on OpenID Agentic AI Identity Management & Okta Data Model</p>
+    
+    <!-- Lifecycle States -->
+    <div class="diagram-section">
+        <h2 class="diagram-title">🎯 Agent Lifecycle States</h2>
+        <div class="diagram-container">
+            <div class="lifecycle-diagram">
+                <div class="state-box state-created">
+                    <span>⚙️</span>
+                    <span>CREATED</span>
+                </div>
+                <span class="arrow">→</span>
+                <div class="state-box state-provisioned">
+                    <span>🔑</span>
+                    <span>PROVISIONED</span>
+                </div>
+                <span class="arrow">→</span>
+                <div class="state-box state-active">
+                    <span>⚡</span>
+                    <span>ACTIVE</span>
+                </div>
+                <span class="arrow">→</span>
+                <div class="state-box state-suspended">
+                    <span>⏸️</span>
+                    <span>SUSPENDED</span>
+                </div>
+                <span class="arrow-back">↩</span>
+                <div class="state-box state-revoked">
+                    <span>🚫</span>
+                    <span>REVOKED</span>
+                </div>
+                <span class="arrow">→</span>
+                <div class="state-box state-deleted">
+                    <span>🗑️</span>
+                    <span>DELETED</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Delegation Chain -->
+    <div class="diagram-section">
+        <h2 class="diagram-title">🔄 Delegation Chain (On-Behalf-Of)</h2>
+        <div class="diagram-container">
+            <div class="delegation-diagram">
+                <div class="actor-box actor-user">
+                    <div class="actor-icon">👤</div>
+                    <div class="actor-name">User</div>
+                    <div class="actor-scopes">Full Access</div>
+                </div>
+                
+                <div class="delegation-arrow">delegates</div>
+                
+                <div class="actor-box actor-primary">
+                    <div class="actor-icon">🤖</div>
+                    <div class="actor-name">Primary Agent</div>
+                    <div class="actor-scopes">read, write</div>
+                </div>
+                
+                <div class="delegation-arrow">delegates</div>
+                
+                <div class="actor-box actor-sub">
+                    <div class="actor-icon">🔧</div>
+                    <div class="actor-name">Sub-Agent</div>
+                    <div class="actor-scopes">read-only</div>
+                </div>
+                
+                <div class="delegation-arrow">uses</div>
+                
+                <div class="actor-box actor-resource">
+                    <div class="actor-icon">📦</div>
+                    <div class="actor-name">Resource</div>
+                    <div class="actor-scopes">API/Data</div>
+                </div>
+            </div>
+            <p style="text-align:center; margin-top:15px; color:#666; font-size:0.8rem;">
+                ⚠️ Each delegation step narrows the permission scope (Scope Attenuation)
+            </p>
+        </div>
+    </div>
+    
+    <!-- Component Architecture -->
+    <div class="diagram-section">
+        <h2 class="diagram-title">🏗️ Core Components</h2>
+        <div class="diagram-container">
+            <div class="architecture-diagram">
+                <div class="component-box">
+                    <div class="component-title">
+                        <span class="component-icon">🆔</span>
+                        AgentIdentity Manager
+                    </div>
+                    <ul class="function-list">
+                        <li>register_agent()</li>
+                        <li>verify_identity()</li>
+                        <li>get_identity()</li>
+                        <li>update_metadata()</li>
+                    </ul>
+                </div>
+                
+                <div class="component-box">
+                    <div class="component-title">
+                        <span class="component-icon">🔄</span>
+                        Lifecycle Manager
+                    </div>
+                    <ul class="function-list">
+                        <li>create_agent()</li>
+                        <li>provision()</li>
+                        <li>suspend() / resume()</li>
+                        <li>deprovision()</li>
+                    </ul>
+                </div>
+                
+                <div class="component-box">
+                    <div class="component-title">
+                        <span class="component-icon">🔗</span>
+                        Delegation Manager
+                    </div>
+                    <ul class="function-list">
+                        <li>delegate_to()</li>
+                        <li>attenuate_scope()</li>
+                        <li>verify_chain()</li>
+                        <li>authorize_action()</li>
+                    </ul>
+                </div>
+                
+                <div class="component-box">
+                    <div class="component-title">
+                        <span class="component-icon">🎫</span>
+                        Token Manager
+                    </div>
+                    <ul class="function-list">
+                        <li>issue_token()</li>
+                        <li>refresh_token()</li>
+                        <li>revoke_token()</li>
+                        <li>propagate_revocation()</li>
+                    </ul>
+                </div>
+                
+                <div class="component-box">
+                    <div class="component-title">
+                        <span class="component-icon">📋</span>
+                        Audit Logger
+                    </div>
+                    <ul class="function-list">
+                        <li>log_event()</li>
+                        <li>get_trail()</li>
+                        <li>enforce_guardrails()</li>
+                        <li>export_audit()</li>
+                    </ul>
+                </div>
+                
+                <div class="component-box">
+                    <div class="component-title">
+                        <span class="component-icon">📊</span>
+                        Scope Manager
+                    </div>
+                    <ul class="function-list">
+                        <li>narrow_scope()</li>
+                        <li>validate_scope()</li>
+                        <li>expand_scope()</li>
+                        <li>check_bounds()</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Token Flow -->
+    <div class="diagram-section">
+        <h2 class="diagram-title">🎫 Token Lifecycle</h2>
+        <div class="diagram-container">
+            <div class="token-flow">
+                <div class="token-box">
+                    <div class="token-type">🟢 Fresh Token</div>
+                    <div class="token-scopes">full scope</div>
+                </div>
+                <span class="flow-arrow">→</span>
+                <div class="token-box">
+                    <div class="token-type">🔄 Use & Attenuate</div>
+                    <div class="token-scopes">narrowed scope</div>
+                </div>
+                <span class="flow-arrow">→</span>
+                <div class="token-box">
+                    <div class="token-type">⏰ Expire / Revoke</div>
+                    <div class="token-scopes">invalidate</div>
+                </div>
+                <span class="flow-arrow">→</span>
+                <div class="token-box">
+                    <div class="token-type">⚡ Propagate</div>
+                    <div class="token-scopes">cascade revoke</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Legend -->
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-color" style="background: linear-gradient(135deg, #1a6a4a, #0a5a3a); border: 2px solid #00ff88;"></div>
+            Active State
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: linear-gradient(135deg, #4a4a6a, #3a3a5a); border: 2px solid #6a6a8a;"></div>
+            Initial State
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: linear-gradient(135deg, #6a1a1a, #5a0a0a); border: 2px solid #ff4444;"></div>
+            Terminated State
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: linear-gradient(135deg, #5a3a8a, #4a2a7a); border: 2px solid #8a5ac8;"></div>
+            Agent Actor
+        </div>
+    </div>
+</body>
+</html>
