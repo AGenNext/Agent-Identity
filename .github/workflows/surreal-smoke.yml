@@ -1,0 +1,34 @@
+name: SurrealDB Smoke Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  surreal-smoke:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install SurrealDB
+        run: |
+          curl -sSf https://install.surrealdb.com | sh
+          # Make the binary discoverable regardless of where the installer placed it.
+          echo "/usr/local/bin" >> "$GITHUB_PATH"
+          echo "$HOME/.surrealdb" >> "$GITHUB_PATH"
+
+      - name: Start SurrealDB (in-memory)
+        run: |
+          surreal start --username root --password root --bind 127.0.0.1:8000 memory &
+          for i in $(seq 1 30); do
+            if surreal is-ready --endpoint http://127.0.0.1:8000 2>/dev/null; then
+              echo "SurrealDB is ready"; break
+            fi
+            sleep 1
+          done
+
+      - name: Run SurrealQL smoke test
+        run: bash scripts/surreal_smoke_test.sh

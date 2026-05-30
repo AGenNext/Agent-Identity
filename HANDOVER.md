@@ -58,6 +58,11 @@ python3 scripts/validate_release.py     # release gate (lifecycle + launch + sur
 3. **Background references not yet promoted to schema** (intentionally glossary-only):
    DigiLocker, IBM Access Management, and the broader Okta/SailPoint detail tables.
    Promote into the enforced vocabulary only with a real `source` per ground rule #1.
-4. **No live SurrealDB run.** The SurrealQL has not been executed against a SurrealDB
-   instance in CI. Consider adding a job that loads the schema/seed into SurrealDB to
-   catch runtime errors (events, functions) beyond the static checks.
+4. **Live SurrealDB execution added (best-effort).** `scripts/surreal_smoke_test.sh` +
+   `.github/workflows/surreal-smoke.yml` install SurrealDB, import the schema in
+   dependency order, run the seeds (which exercise the events/functions at runtime),
+   and assert the positive path, an audit-log entry, and that the transition guard
+   rejects an illegal move. **Not yet executed locally** — SurrealDB could not be
+   installed in the authoring environment (network-restricted), so verify the CLI
+   flags (`is-ready`, `--endpoint`, `import`) against the runner's SurrealDB version
+   on first run and adjust if needed.
