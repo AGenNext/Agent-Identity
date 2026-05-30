@@ -47,6 +47,27 @@ python3 scripts/validate_lifecycle.py   # grounding + cross-file consistency
 python3 scripts/validate_release.py     # release gate (lifecycle + launch + surql + version)
 ```
 
+## Code review fixes applied
+- **`previous_state` bug:** flows now assign `previous_state = state` *before* `state = ...`
+  so the prior value is captured regardless of SurrealDB SET evaluation order.
+- **CREATE grammar bypass:** `agent_lifecycle_create_guard` event forces new records to
+  start in `provisioned`; the audit event is simplified to the UPDATE path.
+- **Enriched audit:** `agent_lifecycle` now carries `actor`/`principal`/`trigger`, which the
+  revoke/deprovision flows set and the audit event copies into `lifecycle_audit_log`.
+- **CI robustness:** smoke workflow fails hard if SurrealDB never becomes ready; the
+  release script's tuple-trick was replaced with a `run_local` helper.
+
+### Still open from the review (not yet done)
+- Graph-layer edges (`delegates_to`, `acts_on_behalf_of`, `operates_in`, `audited_by`,
+  `has_verification_method`, `has_service`) are not yet in the machine-readable vocabulary
+  and are not cross-checked against the JSON-LD context — add them to
+  `vocabulary/agent-lifecycle.vocabulary.json` with `source` citations and extend the
+  validator, to close the grounding/consistency gap.
+- The validator's SurrealQL parsing is regex-based and brittle to reformatting; longer term,
+  generate the schema/glossary from the vocabulary instead of re-parsing.
+- The four repeated state-array literals were left in place because the validator's regex
+  depends on the inline list; dedup requires updating the parser in lockstep.
+
 ## Open items for OpenHands
 1. **CI not running on PR #7.** `get_check_runs` returned 0 — GitHub Actions does not
    appear to be executing the new workflows in this environment. Confirm Actions is

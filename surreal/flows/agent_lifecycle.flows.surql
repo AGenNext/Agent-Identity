@@ -22,9 +22,10 @@ CREATE agent_lifecycle CONTENT {
 
 -- Lifecycle Flow: activate
 -- Move a provisioned agent into active operation.
+-- previous_state is assigned before state so it captures the prior value.
 UPDATE agent_lifecycle SET
-  state = "active",
   previous_state = state,
+  state = "active",
   reason = $reason
 WHERE identity = agent_identity:$identity;
 
@@ -40,18 +41,26 @@ WHERE identity = agent_identity:$identity;
 
 -- Lifecycle Flow: revoke  (Key Terms "Revocation"; §3.2 "The Revocation Challenge")
 -- Invalidate the agent's active credentials / terminate its current session.
+-- actor/principal/trigger are captured into the audit log by the audit event.
 UPDATE agent_lifecycle SET
-  state = "revoked",
   previous_state = state,
+  state = "revoked",
+  actor = $actor,
+  principal = $principal,
+  trigger = $trigger,
   reason = $reason
 WHERE identity = agent_identity:$identity;
 
 -- Lifecycle Flow: deprovision  (Key Terms "De-provisioning"; §3.2 "De-provisioning & Off-boarding")
 -- Permanent, complete removal of the identity and all associated entitlements.
+-- actor/principal/trigger are captured into the audit log by the audit event.
 UPDATE agent_lifecycle SET
-  state = "deprovisioned",
   previous_state = state,
+  state = "deprovisioned",
   entitlements = [],
+  actor = $actor,
+  principal = $principal,
+  trigger = $trigger,
   reason = $reason
 WHERE identity = agent_identity:$identity;
 
