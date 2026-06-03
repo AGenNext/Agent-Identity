@@ -33,6 +33,14 @@
       "usedFor": "Privileged Access Management nodes: Safes that hold privileged accounts/credentials (knowledge-graph safe node and stored_in edge)."
     }
   ],
+  "accessReview": {
+    "$comment": "Access review / certification decisions for the access_review table in surreal/schema/access_review.surql. Each decision must appear in that table's decision ASSERT.",
+    "decisions": [
+      { "term": "pending", "definition": "A review is open and awaiting a decision.", "source": "SailPoint Certifications (campaign opened); operational" },
+      { "term": "certified", "definition": "The reviewer re-approved the access.", "source": "SailPoint Certifications/Campaigns; OpenID whitepaper §2.12 IGA" },
+      { "term": "revoked", "definition": "The reviewer decided the access should be removed.", "source": "OpenID whitepaper §3.2 Revocation; §2.12 IGA" }
+    ]
+  },
   "verification": {
     "$comment": "Identity verification methods for the identity_verification table in agent_identity.surql. Each method must appear in that table's method ASSERT. 'manual' is an operator escape hatch with no whitepaper grounding and is intentionally not listed here.",
     "methods": [

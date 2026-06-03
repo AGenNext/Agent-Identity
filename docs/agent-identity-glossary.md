@@ -119,6 +119,24 @@ In plain English: you **request** a verification (pending), then it becomes **ve
 **failed**; a verified one can be **revoked** later. An agent is "currently verified" if it has
 at least one `verified` record.
 
+## Access reviews (certification)
+
+Governance over time: an owner periodically re-approves an agent's access, the same way
+SailPoint runs certification campaigns and the whitepaper expects agents to be governed as
+first-class identities (§2.12 IGA, §2.9). A review is a row in `access_review` linked to the
+agent; flows live in `surreal/flows/access_review.flows.surql`.
+
+| Decision | Plain English | Source |
+| --- | --- | --- |
+| `pending` | A review is open, awaiting a decision. | SailPoint Certifications (campaign opened) |
+| `certified` | The reviewer re-approved the access. | SailPoint Certifications; §2.12 IGA |
+| `revoked` | The reviewer decided the access should be removed. | §3.2 Revocation; §2.12 IGA |
+
+In plain English: you **open a review** of an agent's entitlements with a due date; the reviewer
+**certifies** (keeps) or **revokes** the access. A `revoked` decision should be followed by the
+lifecycle `revoke` flow to actually switch off the credentials. Overdue pending reviews are a
+governance red flag.
+
 ## Graph layer
 
 The graph layer connects identity records to each other using SurrealDB's native graph

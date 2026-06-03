@@ -26,6 +26,7 @@ SCHEMA = ROOT / "surreal" / "schema" / "agent_lifecycle.surql"
 DID_SCHEMA = ROOT / "surreal" / "schema" / "agent_did.surql"
 KG_SCHEMA = ROOT / "surreal" / "schema" / "agent_knowledge_graph.surql"
 IDENTITY_SCHEMA = ROOT / "surreal" / "schema" / "agent_identity.surql"
+ACCESS_REVIEW_SCHEMA = ROOT / "surreal" / "schema" / "access_review.surql"
 CONTEXT = ROOT / "vocabulary" / "agent-lifecycle.context.jsonld"
 EXAMPLE = ROOT / "vocabulary" / "examples" / "agent.example.jsonld"
 
@@ -108,6 +109,7 @@ def main() -> int:
     require_sources(vocab.get("attributes", []), "Attribute")
     require_sources(vocab.get("did", []), "DID property")
     require_sources(vocab.get("verification", {}).get("methods", []), "Verification method")
+    require_sources(vocab.get("accessReview", {}).get("decisions", []), "Access-review decision")
     kg = vocab.get("knowledgeGraph", {})
     require_sources(kg.get("nodes", []), "Knowledge-graph node")
     require_sources(kg.get("edges", []), "Knowledge-graph edge")
@@ -211,6 +213,26 @@ def main() -> int:
                     err(f"Verification method `{term}` is in the vocabulary but not in the identity_verification method ASSERT.")
                 if f"`{term}`" not in glossary_text:
                     err(f"Glossary is missing verification method `{term}`.")
+
+    # --- access-review decisions must appear in the access_review ASSERT --------
+    decisions = [d["term"] for d in vocab.get("accessReview", {}).get("decisions", [])]
+    if decisions:
+        if not ACCESS_REVIEW_SCHEMA.exists():
+            err("Required file is missing: surreal/schema/access_review.surql")
+        else:
+            ar_text = ACCESS_REVIEW_SCHEMA.read_text()
+            m = re.search(
+                r'DEFINE FIELD decision ON TABLE access_review[^;]*?IN \[([^\]]*)\]',
+                ar_text, re.DOTALL,
+            )
+            ar_decisions = set(collect_array(m.group(1))) if m else set()
+            if m is None:
+                err("Could not find the access_review `decision` ASSERT list.")
+            for term in decisions:
+                if term not in ar_decisions:
+                    err(f"Access-review decision `{term}` is in the vocabulary but not in the access_review decision ASSERT.")
+                if f"`{term}`" not in glossary_text:
+                    err(f"Glossary is missing access-review decision `{term}`.")
 
     # --- edges: schema (RELATION) <-> vocabulary <-> JSON-LD context <-> glossary -
     ctx_keys: set[str] = set()
