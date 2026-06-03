@@ -94,6 +94,50 @@ A DID document is published as JSON-LD using the context `https://www.w3.org/ns/
 | `agent_lifecycle` | The agent's current lifecycle state. | (state maps to [ActionStatusType](https://schema.org/ActionStatusType)) |
 | `lifecycle_audit_log` | A record of each lifecycle change. | [UpdateAction](https://schema.org/UpdateAction) |
 
+## Identity verification
+
+Verification answers the whitepaper's central question — *"is this agent permitted to perform
+this action on behalf of this entity?"* — by establishing a verifiable **who** (§2.4). Each
+verification is a row in `identity_verification` (linked to the agent by the `verified_by`
+edge) with a method and a status. Flows live in
+`surreal/flows/identity_verification.flows.surql`.
+
+**Methods** (how the identity was checked):
+
+| Method | Plain English | Source |
+| --- | --- | --- |
+| `did` | Proof of control of a W3C DID. | §3.1 Sovereign and Portable Agent Identity; W3C DID 1.1 |
+| `oidc` | OpenID Connect authentication of the agent. | §2.4 (OAuth 2.1/OIDC); §3.1 OIDC-A |
+| `vc` | Presentation of a Verifiable Credential. | §3.6 ("signed using Verifiable Credentials (VCs)") |
+| `spiffe` | Workload identity verified via a SPIFFE SVID (e.g. an STS backed by SPIFFE/SPIRE). | §2.8 (SPIFFE/SPIRE, SVIDs) |
+| `registry` | Verified through an agent registry. | §3.3 Registries and Dynamic Connections |
+| `manual` | Operator-asserted (escape hatch). | *no whitepaper grounding — operator assertion* |
+
+**Statuses** (where the verification stands): `pending` → `verified`, or `failed`; a
+`verified` record can later be `revoked` (e.g. on credential compromise, §3.2).
+
+In plain English: you **request** a verification (pending), then it becomes **verified** or
+**failed**; a verified one can be **revoked** later. An agent is "currently verified" if it has
+at least one `verified` record.
+
+## Access reviews (certification)
+
+Governance over time: an owner periodically re-approves an agent's access, the same way
+SailPoint runs certification campaigns and the whitepaper expects agents to be governed as
+first-class identities (§2.12 IGA, §2.9). A review is a row in `access_review` linked to the
+agent; flows live in `surreal/flows/access_review.flows.surql`.
+
+| Decision | Plain English | Source |
+| --- | --- | --- |
+| `pending` | A review is open, awaiting a decision. | SailPoint Certifications (campaign opened) |
+| `certified` | The reviewer re-approved the access. | SailPoint Certifications; §2.12 IGA |
+| `revoked` | The reviewer decided the access should be removed. | §3.2 Revocation; §2.12 IGA |
+
+In plain English: you **open a review** of an agent's entitlements with a due date; the reviewer
+**certifies** (keeps) or **revokes** the access. A `revoked` decision should be followed by the
+lifecycle `revoke` flow to actually switch off the credentials. Overdue pending reviews are a
+governance red flag.
+
 ## Graph layer
 
 The graph layer connects identity records to each other using SurrealDB's native graph
@@ -124,7 +168,13 @@ mapped to schema.org where one exists and to the `agennext:` namespace otherwise
 In plain English: agents **delegate to** other agents (and that authority can be narrowed
 along the chain), agents **act on behalf of** people, and agents **operate in** trust domains.
 Every lifecycle change is **audited**. You can walk these arrows with the graph queries in
-`surreal/queries/agent_graph.queries.surql`.
+`surreal/queries/agent_graph.queries.surql`, and manage them with the delegation flows in
+`surreal/flows/delegation.flows.surql`.
+
+**Scope attenuation (enforced):** a delegation may not grant more than the delegator holds.
+The `delegates_to_attenuation` event rejects a delegated `scope` that is not a subset of the
+delegator's lifecycle `entitlements` (§3.2 / §4.4 — "progressively and verifiably narrow
+permissions"). Recursive sub-delegations narrow scope further at each hop.
 
 ## Knowledge graph (governance)
 
@@ -215,6 +265,7 @@ of them is later promoted into the controlled vocabulary, it must be added to
 | IBM — Access Management | A conceptual overview of access management (IAM): authentication, authorization, single sign-on, least privilege, and MFA. It aligns with the same access-management concepts the OpenID whitepaper builds on; useful as background, not as a vocabulary source. | [ibm.com/think/topics/access-management](https://www.ibm.com/think/topics/access-management) |
 | Okta — Management API schema | Okta's Management API includes a Schema resource that describes the attributes (properties) of users and apps as JSON schema. It is a real-world example of how an IAM platform models identity attributes and could inform a future attribute-schema mapping for agents. Background only, not a vocabulary source. | [developer.okta.com — Schema API](https://developer.okta.com/docs/api/openapi/okta-management/management/tags/schema) |
 | Identique | A referenced digital-identity initiative. **Not yet grounded:** the site ([identique.org](https://identique.org/)) returned HTTP 403 to automated fetching and no reliable public specification was found, so no vocabulary has been derived from it. Provide an accessible source or text to ground it. | [identique.org](https://identique.org/) — pending an accessible source |
+| GoIDC | A consumer **digital-identity + business ecosystem** built around a single "smart card" that connects people, businesses, and AI ecosystems (a "unified identity" for the "global citizen"). Its suite includes Web Card (digital identity), Web Portal (global access), CardX pro, AI Fund, AI Vest, Digital Core (infrastructure), Trade Cloud, and Franchise Hub; ~318k members, India-centric (Telangana/Andhra/Karnataka). It is a **product ecosystem, not a technical OIDC standard** — so it informs consumer-identity/onboarding use cases but is not a vocabulary source. | [goidc.in](https://goidc.in/) — product ecosystem (content provided by the user) |
 
 ### Okta Schema API — important entries (background)
 

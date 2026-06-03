@@ -1,0 +1,39 @@
+{
+  "$description": "Agent Identity design tokens in the W3C Design Tokens format. Single source of truth for the look-and-feel, mirroring the CSS custom properties in site/styles.css. Importable into Penpot (Tokens), Style Dictionary, and Storybook so design and code stay in sync.",
+  "color": {
+    "bg":      { "$value": "#0b1020", "$type": "color", "$description": "Page background base" },
+    "panel":   { "$value": "#121933", "$type": "color", "$description": "Raised surface" },
+    "panel-2": { "$value": "#0f1630", "$type": "color", "$description": "Code/pre surface" },
+    "text":    { "$value": "#eef2ff", "$type": "color", "$description": "Primary text" },
+    "muted":   { "$value": "#b6c2ff", "$type": "color", "$description": "Secondary text" },
+    "accent":  { "$value": "#6ea8fe", "$type": "color", "$description": "Primary accent" },
+    "accent-2":{ "$value": "#9b8cff", "$type": "color", "$description": "Secondary accent" },
+    "border":  { "$value": "rgba(255,255,255,0.08)", "$type": "color", "$description": "Hairline border" }
+  },
+  "radius": {
+    "card":  { "$value": "20px", "$type": "dimension" },
+    "pill":  { "$value": "999px", "$type": "dimension" },
+    "code":  { "$value": "16px", "$type": "dimension" }
+  },
+  "shadow": {
+    "elevated": { "$value": "0 20px 60px rgba(0,0,0,0.35)", "$type": "shadow" }
+  },
+  "font": {
+    "family": { "$value": "Inter, ui-sans-serif, system-ui, sans-serif", "$type": "fontFamily" },
+    "size": {
+      "eyebrow": { "$value": "0.8rem", "$type": "dimension" },
+      "body":    { "$value": "1rem", "$type": "dimension" },
+      "lede":    { "$value": "1.2rem", "$type": "dimension" },
+      "h1":      { "$value": "clamp(3rem, 8vw, 5.5rem)", "$type": "dimension" }
+    },
+    "weight": {
+      "regular": { "$value": "400", "$type": "fontWeight" },
+      "semibold":{ "$value": "600", "$type": "fontWeight" },
+      "bold":    { "$value": "700", "$type": "fontWeight" }
+    }
+  },
+  "space": {
+    "section": { "$value": "2rem", "$type": "dimension" },
+    "page-x":  { "$value": "6vw", "$type": "dimension" }
+  }
+}

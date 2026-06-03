@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://agennext.github.io/Agent-Identity/</loc></url>
+  <url><loc>https://agennext.github.io/Agent-Identity/story.html</loc></url>
+  <url><loc>https://agennext.github.io/Agent-Identity/styleguide.html</loc></url>
   <url><loc>https://agennext.github.io/Agent-Identity/docs.html</loc></url>
   <url><loc>https://agennext.github.io/Agent-Identity/api.html</loc></url>
   <url><loc>https://agennext.github.io/Agent-Identity/swagger.html</loc></url>

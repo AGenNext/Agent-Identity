@@ -32,6 +32,18 @@ DEFINE FIELD scope ON TABLE delegates_to TYPE array<string> DEFAULT [];
 DEFINE FIELD attenuated ON TABLE delegates_to TYPE bool DEFAULT false;
 DEFINE FIELD created_at ON TABLE delegates_to TYPE datetime DEFAULT time::now();
 
+-- Scope attenuation (§3.2 / §4.4): a delegation may not grant more than the
+-- delegator holds. Reject a delegated scope that is not a subset of the
+-- delegator's lifecycle entitlements. Skipped if the delegator has no lifecycle
+-- record (entitlements unknown).
+DEFINE EVENT delegates_to_attenuation ON TABLE delegates_to WHEN $event = "CREATE" THEN {
+  LET $held = (SELECT VALUE entitlements FROM ONLY agent_lifecycle
+               WHERE identity = $after.in LIMIT 1);
+  IF $held != NONE AND !($after.scope ALLINSIDE $held) {
+    THROW "Scope attenuation violated: delegated scope exceeds the delegator's entitlements";
+  };
+};
+
 -- ---------------------------------------------------------------------------
 -- acts_on_behalf_of  (Key Terms: "On-Behalf-Of (OBO) Flow", "Delegated Authority";
 --                     §3.2 "From Impersonation to Delegation (On-Behalf-Of)")

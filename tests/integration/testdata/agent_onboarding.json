@@ -1,0 +1,13 @@
+{
+  "$comment": "Test fixture: a sample agent definition consumed by test_onboarding.py. Mirrors the testdata-fixture convention (Talos k8s/testdata, unboxd pkg/adl/testdata).",
+  "identity": "onb1",
+  "subject": "agent:onb1",
+  "did": "did:web:agents.agennext.dev:onb1",
+  "did_controller": "did:web:agennext.dev",
+  "verifier": "registry",
+  "verification_method": "registry",
+  "owners": ["AGenNext"],
+  "entitlements": ["agent.identity"],
+  "role": "analyst",
+  "trust_domain": "agennext_public_registry"
+}

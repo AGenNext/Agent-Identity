@@ -15,3 +15,12 @@ up:
 
 down:
 	docker compose down
+
+validate:
+	python3 scripts/validate_lifecycle.py
+
+validate-release:
+	python3 scripts/validate_release.py
+
+smoke:
+	bash scripts/surreal_smoke_test.sh

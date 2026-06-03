@@ -57,6 +57,12 @@ DEFINE FIELD owners ON TABLE agent_lifecycle TYPE array<string> DEFAULT [];
 -- "entitlements": §2.9 "all its associated entitlements are irrevocably purged".
 DEFINE FIELD entitlements ON TABLE agent_lifecycle TYPE array<string> DEFAULT [];
 DEFINE FIELD reason ON TABLE agent_lifecycle TYPE option<string>;
+-- Accountability context for the next transition, copied into the audit log by
+-- the agent_lifecycle_audit event. "actor"/"principal": §2.11; "trigger": §3.2.
+DEFINE FIELD actor ON TABLE agent_lifecycle TYPE option<string>;
+DEFINE FIELD principal ON TABLE agent_lifecycle TYPE option<string>;
+DEFINE FIELD trigger ON TABLE agent_lifecycle TYPE option<string>
+  ASSERT $value = NONE OR $value IN ["security_alert", "compromise", "end_of_life"];
 DEFINE FIELD entered_state_at ON TABLE agent_lifecycle TYPE datetime DEFAULT time::now();
 DEFINE FIELD created_at ON TABLE agent_lifecycle TYPE datetime
   VALUE $before.created_at OR time::now() DEFAULT time::now();
@@ -64,6 +70,13 @@ DEFINE FIELD updated_at ON TABLE agent_lifecycle TYPE datetime VALUE time::now()
 
 DEFINE INDEX agent_lifecycle_identity_idx ON TABLE agent_lifecycle COLUMNS identity UNIQUE;
 DEFINE INDEX agent_lifecycle_state_idx ON TABLE agent_lifecycle COLUMNS state;
+
+-- A new lifecycle record must start at the grammar's entry state. Without this,
+-- a direct CREATE could enter any valid state and bypass the state machine.
+DEFINE EVENT agent_lifecycle_create_guard ON TABLE agent_lifecycle WHEN
+  $event = "CREATE" AND $after.state != "provisioned" THEN {
+  THROW "A new agent_lifecycle must start in 'provisioned', got '" + $after.state + "'";
+};
 
 -- Reject illegal transitions inside the write transaction, per the state machine.
 DEFINE EVENT agent_lifecycle_guard ON TABLE agent_lifecycle WHEN
@@ -79,15 +92,19 @@ DEFINE EVENT agent_lifecycle_stamp ON TABLE agent_lifecycle WHEN
   UPDATE $after.id SET entered_state_at = time::now();
 };
 
--- Append an immutable audit-log entry and graph edge on every state change.
+-- Append an immutable, enriched audit-log entry and graph edge on every state
+-- change. The accountability fields (actor/principal/trigger) are carried on the
+-- agent_lifecycle record by the flow that makes the change.
 -- "audit logs of all authentication events" (§2.4); "enriched audit logs" (§2.11).
 DEFINE EVENT agent_lifecycle_audit ON TABLE agent_lifecycle WHEN
-  ($event = "CREATE" AND $after.state != "provisioned")
-  OR ($event = "UPDATE" AND $before.state != $after.state) THEN {
+  $event = "UPDATE" AND $before.state != $after.state THEN {
   LET $entry = (CREATE ONLY lifecycle_audit_log CONTENT {
     identity: $after.identity,
-    from_state: IF $event = "CREATE" { NONE } ELSE { $before.state },
+    from_state: $before.state,
     to_state: $after.state,
+    actor: $after.actor,
+    principal: $after.principal,
+    trigger: $after.trigger,
     reason: $after.reason
   });
   RELATE $after.identity->audited_by->$entry.id;

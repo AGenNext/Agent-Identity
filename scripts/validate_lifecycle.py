@@ -25,7 +25,10 @@ GLOSSARY = ROOT / "docs" / "agent-identity-glossary.md"
 SCHEMA = ROOT / "surreal" / "schema" / "agent_lifecycle.surql"
 DID_SCHEMA = ROOT / "surreal" / "schema" / "agent_did.surql"
 KG_SCHEMA = ROOT / "surreal" / "schema" / "agent_knowledge_graph.surql"
+IDENTITY_SCHEMA = ROOT / "surreal" / "schema" / "agent_identity.surql"
+ACCESS_REVIEW_SCHEMA = ROOT / "surreal" / "schema" / "access_review.surql"
 CONTEXT = ROOT / "vocabulary" / "agent-lifecycle.context.jsonld"
+EXAMPLE = ROOT / "vocabulary" / "examples" / "agent.example.jsonld"
 
 errors: list[str] = []
 
@@ -105,6 +108,8 @@ def main() -> int:
     require_sources(vocab.get("triggers", []), "Trigger")
     require_sources(vocab.get("attributes", []), "Attribute")
     require_sources(vocab.get("did", []), "DID property")
+    require_sources(vocab.get("verification", {}).get("methods", []), "Verification method")
+    require_sources(vocab.get("accessReview", {}).get("decisions", []), "Access-review decision")
     kg = vocab.get("knowledgeGraph", {})
     require_sources(kg.get("nodes", []), "Knowledge-graph node")
     require_sources(kg.get("edges", []), "Knowledge-graph edge")
@@ -187,6 +192,105 @@ def main() -> int:
         for term in kg_terms:
             if f"`{term}`" not in glossary_text:
                 err(f"Glossary is missing knowledge-graph term `{term}`.")
+
+    # --- verification methods must appear in the identity_verification ASSERT ----
+    verification = vocab.get("verification", {})
+    vmethods = [m["term"] for m in verification.get("methods", [])]
+    if vmethods:
+        if not IDENTITY_SCHEMA.exists():
+            err("Required file is missing: surreal/schema/agent_identity.surql")
+        else:
+            id_text = IDENTITY_SCHEMA.read_text()
+            m = re.search(
+                r'DEFINE FIELD method ON TABLE identity_verification[^;]*?IN \[([^\]]*)\]',
+                id_text, re.DOTALL,
+            )
+            schema_methods = set(collect_array(m.group(1))) if m else set()
+            if m is None:
+                err("Could not find the identity_verification `method` ASSERT list in agent_identity.surql.")
+            for term in vmethods:
+                if term not in schema_methods:
+                    err(f"Verification method `{term}` is in the vocabulary but not in the identity_verification method ASSERT.")
+                if f"`{term}`" not in glossary_text:
+                    err(f"Glossary is missing verification method `{term}`.")
+
+    # --- access-review decisions must appear in the access_review ASSERT --------
+    decisions = [d["term"] for d in vocab.get("accessReview", {}).get("decisions", [])]
+    if decisions:
+        if not ACCESS_REVIEW_SCHEMA.exists():
+            err("Required file is missing: surreal/schema/access_review.surql")
+        else:
+            ar_text = ACCESS_REVIEW_SCHEMA.read_text()
+            m = re.search(
+                r'DEFINE FIELD decision ON TABLE access_review[^;]*?IN \[([^\]]*)\]',
+                ar_text, re.DOTALL,
+            )
+            ar_decisions = set(collect_array(m.group(1))) if m else set()
+            if m is None:
+                err("Could not find the access_review `decision` ASSERT list.")
+            for term in decisions:
+                if term not in ar_decisions:
+                    err(f"Access-review decision `{term}` is in the vocabulary but not in the access_review decision ASSERT.")
+                if f"`{term}`" not in glossary_text:
+                    err(f"Glossary is missing access-review decision `{term}`.")
+
+    # --- edges: schema (RELATION) <-> vocabulary <-> JSON-LD context <-> glossary -
+    ctx_keys: set[str] = set()
+    ctx = load_json(CONTEXT).get("@context", [])
+    for part in ctx if isinstance(ctx, list) else [ctx]:
+        if isinstance(part, dict):
+            ctx_keys.update(part.keys())
+
+    graph_edges = vocab.get("graph", {}).get("edges", [])
+    require_sources(graph_edges, "Graph edge")
+
+    # Schema files that define this project's RELATION edges (excludes the base
+    # agent_identity.surql, whose relations predate this vocabulary).
+    relation_files = [
+        ROOT / "surreal" / "schema" / "agent_graph.surql",
+        ROOT / "surreal" / "schema" / "agent_lifecycle.surql",
+        ROOT / "surreal" / "schema" / "agent_did.surql",
+        KG_SCHEMA,
+    ]
+    schema_blob = "\n".join(p.read_text() for p in relation_files if p.exists())
+
+    declared_edges = [e["term"] for e in graph_edges] + [e["term"] for e in kg.get("edges", [])]
+    for term in declared_edges:
+        if not re.search(rf'DEFINE TABLE {re.escape(term)} TYPE RELATION', schema_blob):
+            err(f"Edge `{term}` is in the vocabulary but not a RELATION table in the schema.")
+        if term not in ctx_keys:
+            err(f"Edge `{term}` is not defined in the JSON-LD context.")
+        if f"`{term}`" not in glossary_text:
+            err(f"Glossary is missing edge `{term}`.")
+
+    # Reverse: every RELATION table in those schema files must be declared in the vocabulary.
+    declared_set = set(declared_edges)
+    for match in re.finditer(r'DEFINE TABLE (\w+) TYPE RELATION', schema_blob):
+        name = match.group(1)
+        if name not in declared_set:
+            err(f"RELATION table `{name}` is in the schema but not declared in the vocabulary (graph/knowledgeGraph edges).")
+
+    # Knowledge-graph nodes should also resolve in the JSON-LD context.
+    for node in kg.get("nodes", []):
+        if node["term"] not in ctx_keys:
+            err(f"Knowledge-graph node `{node['term']}` is not defined in the JSON-LD context.")
+
+    # --- JSON-LD example must only use keys defined in the context ----------------
+    if EXAMPLE.exists():
+        example = load_json(EXAMPLE)
+        defined = set(ctx_keys)
+        # JSON-LD keywords and the documentation key are always allowed.
+        allowed = defined | {"@context", "@type", "@id", "@vocab", "name", "value", "$comment"}
+        def check_keys(obj: object) -> None:
+            if isinstance(obj, dict):
+                for key, val in obj.items():
+                    if not key.startswith("@") and key not in allowed:
+                        err(f"JSON-LD example uses key `{key}` not defined in the context.")
+                    check_keys(val)
+            elif isinstance(obj, list):
+                for item in obj:
+                    check_keys(item)
+        check_keys(example)
 
     return report()
 

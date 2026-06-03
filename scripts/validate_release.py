@@ -56,12 +56,17 @@ def check_version() -> bool:
     return True
 
 
+def run_local(label: str, check_fn) -> bool:
+    print(f"\n=== {label} ===")
+    return check_fn()
+
+
 def main() -> int:
     results = {
         "lifecycle vocabulary": run_script("validate_lifecycle.py"),
         "launch readiness": run_script("check_launch_ready.py"),
-        "surql structure": (print("\n=== surql structure ==="), check_surql())[1],
-        "release version": (print("\n=== release version ==="), check_version())[1],
+        "surql structure": run_local("surql structure", check_surql),
+        "release version": run_local("release version", check_version),
     }
     print("\n=== Release validation summary ===")
     for name, ok in results.items():

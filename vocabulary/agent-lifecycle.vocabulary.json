@@ -33,6 +33,36 @@
       "usedFor": "Privileged Access Management nodes: Safes that hold privileged accounts/credentials (knowledge-graph safe node and stored_in edge)."
     }
   ],
+  "accessReview": {
+    "$comment": "Access review / certification decisions for the access_review table in surreal/schema/access_review.surql. Each decision must appear in that table's decision ASSERT.",
+    "decisions": [
+      { "term": "pending", "definition": "A review is open and awaiting a decision.", "source": "SailPoint Certifications (campaign opened); operational" },
+      { "term": "certified", "definition": "The reviewer re-approved the access.", "source": "SailPoint Certifications/Campaigns; OpenID whitepaper §2.12 IGA" },
+      { "term": "revoked", "definition": "The reviewer decided the access should be removed.", "source": "OpenID whitepaper §3.2 Revocation; §2.12 IGA" }
+    ]
+  },
+  "verification": {
+    "$comment": "Identity verification methods for the identity_verification table in agent_identity.surql. Each method must appear in that table's method ASSERT. 'manual' is an operator escape hatch with no whitepaper grounding and is intentionally not listed here.",
+    "methods": [
+      { "term": "did", "definition": "Proof of control of a W3C DID.", "source": "OpenID whitepaper §3.1 Sovereign and Portable Agent Identity; W3C DID 1.1" },
+      { "term": "oidc", "definition": "OpenID Connect authentication of the agent.", "source": "OpenID whitepaper §2.4 (OAuth 2.1/OIDC); §3.1 OIDC-A [12]" },
+      { "term": "vc", "definition": "Presentation of a Verifiable Credential.", "source": "OpenID whitepaper §3.6 ('signed using Verifiable Credentials (VCs)')" },
+      { "term": "spiffe", "definition": "Workload identity verified via a SPIFFE SVID (e.g. an STS backed by SPIFFE/SPIRE).", "source": "OpenID whitepaper §2.8 (SPIFFE/SPIRE workload identity, SVIDs)" },
+      { "term": "registry", "definition": "Verified via an agent registry.", "source": "OpenID whitepaper §3.3 Registries and Dynamic Connections to External Tools" }
+    ],
+    "statuses": ["pending", "verified", "failed", "revoked"]
+  },
+  "graph": {
+    "$comment": "Graph-layer edges connecting identity/lifecycle/DID nodes. Every edge must be a RELATION table in the schema, a key in the JSON-LD context, and in the glossary.",
+    "edges": [
+      { "term": "delegates_to", "definition": "One agent delegates a subset of its authority to another agent (a delegation chain).", "source": "OpenID whitepaper Key Terms: Recursive Delegation, Scope Attenuation; §3.2", "jsonld": "agennext:delegatesTo" },
+      { "term": "acts_on_behalf_of", "definition": "An agent acts for a human principal while staying distinct from them.", "source": "OpenID whitepaper Key Terms: On-Behalf-Of (OBO) Flow, Delegated Authority; §3.2", "jsonld": "agennext:actsOnBehalfOf" },
+      { "term": "operates_in", "definition": "An agent operates within a trust domain.", "source": "OpenID whitepaper Key Terms: Trust Domain", "jsonld": "schema:memberOf" },
+      { "term": "audited_by", "definition": "An agent is linked to each of its lifecycle audit-log entries.", "source": "OpenID whitepaper §2.11 enriched audit logs", "jsonld": "agennext:auditedBy" },
+      { "term": "has_verification_method", "definition": "A DID document links to its verification methods (keys).", "source": "W3C DID 1.1 §5.2", "jsonld": "did:verificationMethod" },
+      { "term": "has_service", "definition": "A DID document links to its service endpoints.", "source": "W3C DID 1.1 §5.4", "jsonld": "did:service" }
+    ]
+  },
   "knowledgeGraph": {
     "$comment": "Governance knowledge graph promoted from SailPoint IGA + Okta Schema. Every node/edge must appear in surreal/schema/agent_knowledge_graph.surql.",
     "nodes": [

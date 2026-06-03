@@ -1,0 +1,82 @@
+{
+  "$comment": "Catalog of Okta Management API integration points and how each maps onto the Agent Identity model. Reference material (not enforced vocabulary). Human-readable twin: docs/okta-integration-catalog.md. Grounded in the Okta developer documentation; the SCIM lifecycle concept is also grounded in the OpenID 'Identity Management for Agentic AI' whitepaper §2.9.",
+  "source": {
+    "publisher": "Okta",
+    "api": "Okta Management API",
+    "url": "https://developer.okta.com/docs/api/"
+  },
+  "catalog": [
+    {
+      "resource": "Users",
+      "purpose": "Lifecycle of an identity: create, activate, suspend, deactivate, delete.",
+      "mapsTo": "agent_identity + agent_lifecycle (provisioned/active/revoked/deprovisioned)",
+      "okta_doc": "https://developer.okta.com/docs/api/openapi/okta-management/management/tags/user/"
+    },
+    {
+      "resource": "Schema",
+      "purpose": "Attribute definitions for users/groups/apps (base + custom).",
+      "mapsTo": "schema_attribute node via has_attribute edge",
+      "okta_doc": "https://developer.okta.com/docs/api/openapi/okta-management/management/tags/schema/"
+    },
+    {
+      "resource": "SCIM provisioning",
+      "purpose": "Automated create/update/deactivate/delete across systems.",
+      "mapsTo": "okta_integration flows: scim_provision / scim_activate / scim_deactivate / scim_delete",
+      "okta_doc": "https://developer.okta.com/docs/concepts/scim/"
+    },
+    {
+      "resource": "Groups",
+      "purpose": "Collections of identities; group-based access assignment.",
+      "mapsTo": "role / access_profile assignment (assigned_role / assigned_access)",
+      "okta_doc": "https://developer.okta.com/docs/api/openapi/okta-management/management/tags/group/"
+    },
+    {
+      "resource": "Applications",
+      "purpose": "Connected apps and their per-app user profiles.",
+      "mapsTo": "source node; account on a source (holds_account / account_on_source)",
+      "okta_doc": "https://developer.okta.com/docs/api/openapi/okta-management/management/tags/application/"
+    },
+    {
+      "resource": "Roles (Administrator roles)",
+      "purpose": "Role-based administrative permissions.",
+      "mapsTo": "role node (assigned_role)",
+      "okta_doc": "https://developer.okta.com/docs/api/openapi/okta-management/management/tags/role-assignment/"
+    },
+    {
+      "resource": "System Log",
+      "purpose": "Audit trail of all events in the org.",
+      "mapsTo": "lifecycle_audit_log (audited_by)",
+      "okta_doc": "https://developer.okta.com/docs/api/openapi/okta-management/management/tags/system-log/"
+    },
+    {
+      "resource": "Event Hooks / Inline Hooks",
+      "purpose": "Outbound notifications and synchronous decision hooks on events.",
+      "mapsTo": "triggers for lifecycle transitions (e.g. deactivate on a security_alert)",
+      "okta_doc": "https://developer.okta.com/docs/concepts/event-hooks/"
+    },
+    {
+      "resource": "Policies",
+      "purpose": "Sign-on, password, and authenticator/MFA policies.",
+      "mapsTo": "guardrails / access constraints on entitlements",
+      "okta_doc": "https://developer.okta.com/docs/api/openapi/okta-management/management/tags/policy/"
+    },
+    {
+      "resource": "Authenticators / Factors",
+      "purpose": "Credentials and authentication factors bound to an identity.",
+      "mapsTo": "DID verification_method (has_verification_method)",
+      "okta_doc": "https://developer.okta.com/docs/api/openapi/okta-management/management/tags/authenticator/"
+    },
+    {
+      "resource": "Authorization Servers (OAuth 2.0 / OIDC)",
+      "purpose": "Issue tokens and define scopes/claims.",
+      "mapsTo": "agent_identity.oidc_issuer / oidc_scopes; entitlements",
+      "okta_doc": "https://developer.okta.com/docs/api/openapi/okta-management/management/tags/authorization-server/"
+    },
+    {
+      "resource": "Identity Providers (IdPs)",
+      "purpose": "Federation with external identity providers.",
+      "mapsTo": "trust_domain (operates_in); cross-domain federation",
+      "okta_doc": "https://developer.okta.com/docs/api/openapi/okta-management/management/tags/identity-provider/"
+    }
+  ]
+}
