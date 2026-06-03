@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Story | Agent Identity</title>
+    <meta name="description" content="From Web 1.0 to the agentic web: why identity for autonomous AI agents is the inflection point of this moment." />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="nav">
+      <a class="brand" href="./index.html">Agent Identity</a>
+      <nav>
+        <a href="./story.html">Story</a>
+        <a href="./docs.html">Docs</a>
+        <a href="./api.html">API</a>
+        <a href="./swagger.html">Swagger</a>
+        <a href="./sdk.html">SDK</a>
+        <a href="./security.html">Security</a>
+        <a class="button small" href="https://github.com/AGenNext/Agent-Identity">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="eyebrow">The Story</div>
+        <h1>Every era of the web redefined identity. The agentic web is next.</h1>
+        <p class="lede">
+          The web has reinvented itself roughly once a decade — and each time, the hardest
+          question was the same: <em>who is on the other end, and what are they allowed to do?</em>
+          Autonomous AI agents are forcing that question again, at machine speed and across every
+          boundary at once. This is the inflection point.
+        </p>
+        <div class="actions">
+          <a class="button" href="#agentic">The moment we're in</a>
+          <a class="button secondary" href="./docs.html">Read the model</a>
+        </div>
+      </section>
+
+      <section class="grid cards" id="eras">
+        <article class="card">
+          <div class="eyebrow">Web 1.0 — Read</div>
+          <h2>The static web</h2>
+          <p>Pages you could read, not change. Visitors were anonymous; there was no identity
+          layer at all. Trust meant "the document loaded."</p>
+        </article>
+        <article class="card">
+          <div class="eyebrow">Web 2.0 — Read / Write</div>
+          <h2>The platform web</h2>
+          <p>Accounts, logins, and the social graph. Identity became the human login — secured by
+          OAuth 2.0, OpenID Connect, and enterprise SSO. Powerful, but built entirely around a
+          <em>person</em> clicking a button.</p>
+        </article>
+        <article class="card">
+          <div class="eyebrow">Web 3.0 — Read / Write / Own</div>
+          <h2>The decentralized web</h2>
+          <p>Self-sovereign identity: W3C Decentralized Identifiers (DIDs) and Verifiable
+          Credentials let a subject prove who they are and what they hold — portably, without a
+          single central authority.</p>
+        </article>
+        <article class="card">
+          <div class="eyebrow">Now — Read / Write / Act</div>
+          <h2>The agentic web</h2>
+          <p>Software that <em>decides and acts</em> on its own, calls tools, spawns sub-agents,
+          and crosses organizations — faster than any human can oversee. The actor is no longer a
+          person at all.</p>
+        </article>
+      </section>
+
+      <section class="section" id="web3">
+        <div class="section-head">
+          <span class="eyebrow">What Web3 unlocks</span>
+          <h2>The building blocks the agentic web inherits</h2>
+          <p>
+            Web3's real contribution isn't tokens or chains — it's a way to carry identity and
+            authority that no longer depends on a single provider. Those are exactly the primitives
+            an agent needs to operate across organizations it has never met.
+          </p>
+        </div>
+        <section class="grid cards">
+          <article class="card"><h2>Self-owned identifiers</h2><p>W3C <strong>DIDs</strong> give an agent a globally unique identifier it controls with its own keys — verifiable by a third party that has no visibility into its host (§3.1, "Sovereign and Portable Agent Identity").</p></article>
+          <article class="card"><h2>Portable proof</h2><p><strong>Verifiable Credentials</strong> let an agent prove a claim — "authorized to access this" — without a central lookup, with selective disclosure so it reveals only what's needed.</p></article>
+          <article class="card"><h2>Decentralized trust</h2><p>Federation and cryptographic verification let agents establish trust <em>on first contact</em> across domains where no shared identity provider exists.</p></article>
+          <article class="card"><h2>Attenuable capabilities</h2><p>Object-capability tokens (Biscuits, Macaroons) embed authority in the credential itself and can be narrowed offline — the basis for safe recursive delegation (§3.2).</p></article>
+        </section>
+      </section>
+
+      <section class="section" id="agentic">
+        <div class="section-head">
+          <span class="eyebrow">The significance of this moment</span>
+          <h2>For the first time, the actor isn't human</h2>
+          <p>
+            Every prior identity system — OAuth, OIDC, SSO, even DIDs — was designed for a human
+            subject. Agents break that assumption. They act on behalf of people but are distinct
+            from them; they delegate to other agents; they operate across trust domains where no
+            single identity provider has authority. The OpenID Foundation's
+            <em>Identity Management for Agentic AI</em> (2025) names the stakes: avoid agent
+            identity fragmentation, replace impersonation with true delegation, and give every
+            agent a governable, auditable lifecycle. Get this right and the Internet of Agents is
+            trustworthy by construction; get it wrong and we inherit an ecosystem of unaccountable,
+            high-velocity actors.
+          </p>
+        </div>
+        <section class="grid cards">
+          <article class="card"><h2>Impersonation → delegation</h2><p>An agent should prove it acts <em>on behalf of</em> a principal while staying distinct from them — a clear, auditable chain.</p></article>
+          <article class="card"><h2>Permissions that narrow</h2><p>Authority must attenuate down a delegation chain, never expand — least privilege enforced, not hoped for.</p></article>
+          <article class="card"><h2>A verifiable lifecycle</h2><p>Provision, verify, govern, and — critically — <em>verifiably</em> de-provision. A half-revoked agent is a standing threat.</p></article>
+          <article class="card"><h2>Accountability by default</h2><p>Every action ties back to both the human principal and the agent actor, closing the audit gap.</p></article>
+        </section>
+      </section>
+
+      <section class="section" id="economy">
+        <div class="section-head">
+          <span class="eyebrow">What it means for people</span>
+          <h2>Your digital twin — and a web where anyone can earn</h2>
+          <p>
+            Give a person a verifiable agent and you give them a <strong>digital twin</strong>: a
+            tireless representative that acts on their behalf, yet stays cryptographically distinct
+            and accountable to them — never an impersonation. That twin can do more than fetch
+            information; with a real identity and bounded, delegated authority it can
+            <strong>transact</strong>. Signed payment mandates and "Know Your Agent" flows
+            (whitepaper §3.6) let an agent buy, sell, and settle on your behalf within limits you
+            set. The result is a web where <em>anyone</em> — not just platforms — can put an agent
+            to work and earn, because the agent can be trusted, scoped, and audited.
+          </p>
+        </div>
+        <section class="grid cards">
+          <article class="card"><h2>A twin, not a mask</h2><p>The agent represents you but is identifiably distinct — every action traces back to both you and it.</p></article>
+          <article class="card"><h2>Authority with limits</h2><p>Delegated scope that only narrows: your twin acts within an envelope you define, enforced, not assumed.</p></article>
+          <article class="card"><h2>An economy it can join</h2><p>Verifiable identity + signed mandates let agents pay and get paid — opening earning to everyone, not just incumbents.</p></article>
+        </section>
+      </section>
+
+      <section class="section split" id="answer">
+        <div>
+          <span class="eyebrow">Our answer</span>
+          <h2>Treat agents as first-class identities</h2>
+          <p>
+            Agent Identity makes the agent a governed, verifiable identity — implemented as
+            executable SurrealQL with one rule: every term is grounded in a cited source and
+            nothing is invented. It composes the eras rather than discarding them — OIDC from
+            Web 2.0, DIDs and Verifiable Credentials from Web 3.0 — into a single lifecycle for the
+            agentic web.
+          </p>
+        </div>
+        <pre><code>register → bind DID → verify
+  (did / oidc / vc / spiffe / registry)
+   → provision → activate
+      → delegate (scope attenuation enforced)
+      → act-on-behalf-of a principal
+      → operate in a trust domain
+   → access review / certify
+→ revoke → deprovision</code></pre>
+      </section>
+
+      <section class="section" id="controlplane">
+        <div class="section-head">
+          <span class="eyebrow">The pattern: Linux → Kubernetes → AI</span>
+          <h2>Every compute era grows an open control plane — and an identity layer</h2>
+          <p>
+            The same shape keeps repeating. An open foundation standardizes the substrate; an open
+            control plane orchestrates what runs on it; and each new class of workload needs a way
+            to prove <em>what it is</em> and <em>what it may do</em>.
+          </p>
+        </div>
+        <section class="grid cards">
+          <article class="card"><div class="eyebrow">Linux</div><h2>The open substrate</h2><p>An open kernel standardized compute itself — the neutral foundation everything else was built on.</p></article>
+          <article class="card"><div class="eyebrow">Kubernetes</div><h2>The open control plane</h2><p>It orchestrated containerized workloads and, with SPIFFE/SPIRE, gave each workload a verifiable, short-lived identity — no shared secrets.</p></article>
+          <article class="card"><div class="eyebrow">AI agents</div><h2>The new workload</h2><p>Autonomous, non-deterministic, cross-domain. They are the next class of workload — and they need the same neutral identity layer, raised to handle delegation and behavior.</p></article>
+        </section>
+        <p>
+          Agent Identity is that layer for the agentic era: a vendor-neutral, standards-grounded
+          identity control plane that extends workload identity (SPIFFE) with delegation,
+          verifiable credentials, lifecycle, and audit — so agents are as governable as the
+          containers Kubernetes orchestrates.
+        </p>
+        <p>
+          And like Linux, this is ultimately about <strong>freedom</strong>. An open, neutral
+          identity layer is what keeps the Internet of Agents <em>open</em> — interoperable by
+          default, owned by no single vendor, and free of the lock-in that fragmentation creates.
+          The whitepaper is blunt about the stakes: for this ecosystem to thrive, it
+          <em>must not become a walled garden</em>.
+        </p>
+      </section>
+
+      <section class="section" id="ecosystem">
+        <div class="section-head">
+          <span class="eyebrow">Composed, not walled</span>
+          <h2>Built on the standards and systems already in use</h2>
+          <p>Grounded in the OpenID whitepaper and W3C DID 1.1, mapped to schema.org as JSON-LD,
+          and integrated with the enterprise identity stack — Okta, SailPoint, CyberArk, and
+          SPIFFE/SPIRE — so the trust layer for agents meets organizations where they already are.</p>
+        </div>
+        <section class="grid cards">
+          <article class="card"><h2>Open innovation</h2><p>Open standards and an open model mean anyone can build on the same trust layer — progress compounds instead of fragmenting into silos.</p></article>
+          <article class="card"><h2>Knowledge is accessible</h2><p>Every term is defined in plain English <em>and</em> machine-readable form, each traced to its source — the model is legible to people, not just parsers.</p></article>
+        </section>
+      </section>
+
+      <section class="cta">
+        <h2>The trust layer for the Internet of Agents.</h2>
+        <p>The web changed who could publish, then who could participate, then who could own.
+        Now it's changing who can <em>act</em>. Identity is how we keep it accountable — and our aim
+        is to be an <strong>enabler</strong>, not a gatekeeper: the open layer that lets anyone give
+        an agent a trustworthy identity and put it to work.</p>
+        <a class="button" href="./docs.html">Read the model</a>
+      </section>
+    </main>
+
+    <footer><p>© AgenNext. Agent Identity for secure autonomous systems.</p></footer>
+  </body>
+</html>
