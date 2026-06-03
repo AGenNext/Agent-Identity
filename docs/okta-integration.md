@@ -52,3 +52,5 @@ permanently removes the agent and its entitlements.
   processes (Best Practices, §2.14).
 - This is a mapping layer only; it does not call Okta APIs. A connector that polls Okta and
   invokes these flows is a separate, future piece of work.
+- For the full menu of Okta resources and where each maps, see the
+  [Okta Integration Catalog](./okta-integration-catalog.md).
