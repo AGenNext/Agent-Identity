@@ -189,14 +189,51 @@ def main() -> int:
             if f"`{term}`" not in glossary_text:
                 err(f"Glossary is missing knowledge-graph term `{term}`.")
 
+    # --- edges: schema (RELATION) <-> vocabulary <-> JSON-LD context <-> glossary -
+    ctx_keys: set[str] = set()
+    ctx = load_json(CONTEXT).get("@context", [])
+    for part in ctx if isinstance(ctx, list) else [ctx]:
+        if isinstance(part, dict):
+            ctx_keys.update(part.keys())
+
+    graph_edges = vocab.get("graph", {}).get("edges", [])
+    require_sources(graph_edges, "Graph edge")
+
+    # Schema files that define this project's RELATION edges (excludes the base
+    # agent_identity.surql, whose relations predate this vocabulary).
+    relation_files = [
+        ROOT / "surreal" / "schema" / "agent_graph.surql",
+        ROOT / "surreal" / "schema" / "agent_lifecycle.surql",
+        ROOT / "surreal" / "schema" / "agent_did.surql",
+        KG_SCHEMA,
+    ]
+    schema_blob = "\n".join(p.read_text() for p in relation_files if p.exists())
+
+    declared_edges = [e["term"] for e in graph_edges] + [e["term"] for e in kg.get("edges", [])]
+    for term in declared_edges:
+        if not re.search(rf'DEFINE TABLE {re.escape(term)} TYPE RELATION', schema_blob):
+            err(f"Edge `{term}` is in the vocabulary but not a RELATION table in the schema.")
+        if term not in ctx_keys:
+            err(f"Edge `{term}` is not defined in the JSON-LD context.")
+        if f"`{term}`" not in glossary_text:
+            err(f"Glossary is missing edge `{term}`.")
+
+    # Reverse: every RELATION table in those schema files must be declared in the vocabulary.
+    declared_set = set(declared_edges)
+    for match in re.finditer(r'DEFINE TABLE (\w+) TYPE RELATION', schema_blob):
+        name = match.group(1)
+        if name not in declared_set:
+            err(f"RELATION table `{name}` is in the schema but not declared in the vocabulary (graph/knowledgeGraph edges).")
+
+    # Knowledge-graph nodes should also resolve in the JSON-LD context.
+    for node in kg.get("nodes", []):
+        if node["term"] not in ctx_keys:
+            err(f"Knowledge-graph node `{node['term']}` is not defined in the JSON-LD context.")
+
     # --- JSON-LD example must only use keys defined in the context ----------------
     if EXAMPLE.exists():
         example = load_json(EXAMPLE)
-        ctx = load_json(CONTEXT).get("@context", [])
-        defined: set[str] = set()
-        for part in ctx if isinstance(ctx, list) else [ctx]:
-            if isinstance(part, dict):
-                defined.update(part.keys())
+        defined = set(ctx_keys)
         # JSON-LD keywords and the documentation key are always allowed.
         allowed = defined | {"@context", "@type", "@id", "@vocab", "name", "value", "$comment"}
         def check_keys(obj: object) -> None:

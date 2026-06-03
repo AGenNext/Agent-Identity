@@ -33,6 +33,17 @@
       "usedFor": "Privileged Access Management nodes: Safes that hold privileged accounts/credentials (knowledge-graph safe node and stored_in edge)."
     }
   ],
+  "graph": {
+    "$comment": "Graph-layer edges connecting identity/lifecycle/DID nodes. Every edge must be a RELATION table in the schema, a key in the JSON-LD context, and in the glossary.",
+    "edges": [
+      { "term": "delegates_to", "definition": "One agent delegates a subset of its authority to another agent (a delegation chain).", "source": "OpenID whitepaper Key Terms: Recursive Delegation, Scope Attenuation; §3.2", "jsonld": "agennext:delegatesTo" },
+      { "term": "acts_on_behalf_of", "definition": "An agent acts for a human principal while staying distinct from them.", "source": "OpenID whitepaper Key Terms: On-Behalf-Of (OBO) Flow, Delegated Authority; §3.2", "jsonld": "agennext:actsOnBehalfOf" },
+      { "term": "operates_in", "definition": "An agent operates within a trust domain.", "source": "OpenID whitepaper Key Terms: Trust Domain", "jsonld": "schema:memberOf" },
+      { "term": "audited_by", "definition": "An agent is linked to each of its lifecycle audit-log entries.", "source": "OpenID whitepaper §2.11 enriched audit logs", "jsonld": "agennext:auditedBy" },
+      { "term": "has_verification_method", "definition": "A DID document links to its verification methods (keys).", "source": "W3C DID 1.1 §5.2", "jsonld": "did:verificationMethod" },
+      { "term": "has_service", "definition": "A DID document links to its service endpoints.", "source": "W3C DID 1.1 §5.4", "jsonld": "did:service" }
+    ]
+  },
   "knowledgeGraph": {
     "$comment": "Governance knowledge graph promoted from SailPoint IGA + Okta Schema. Every node/edge must appear in surreal/schema/agent_knowledge_graph.surql.",
     "nodes": [
