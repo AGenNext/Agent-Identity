@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Design System | Agent Identity</title>
+    <meta name="description" content="The Agent Identity design system: tokens, typography, and components." />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="nav">
+      <a class="brand" href="./index.html">Agent Identity</a>
+      <nav>
+        <a href="./index.html">Home</a>
+        <a href="./story.html">Story</a>
+        <a href="./docs.html">Docs</a>
+        <a href="./api.html">API</a>
+        <a href="./swagger.html">Swagger</a>
+        <a href="./sdk.html">SDK</a>
+        <a href="./security.html">Security</a>
+        <a class="button small" href="https://github.com/AGenNext/Agent-Identity">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="eyebrow">Design System</div>
+        <h1>One consistent language for every surface.</h1>
+        <p class="lede">
+          The living source of truth for Agent Identity's look and feel. Tokens here mirror
+          <code>site/styles.css</code> and <code>site/design-tokens.json</code> — the same tokens
+          that flow into Penpot (design) and Storybook (components).
+        </p>
+      </section>
+
+      <section class="section" id="colors">
+        <div class="section-head"><span class="eyebrow">Tokens</span><h2>Color</h2></div>
+        <div class="grid cards">
+          <article class="card"><div style="height:48px;border-radius:12px;background:var(--bg);border:1px solid var(--border)"></div><p><strong>bg</strong><br/>#0b1020</p></article>
+          <article class="card"><div style="height:48px;border-radius:12px;background:var(--panel);border:1px solid var(--border)"></div><p><strong>panel</strong><br/>#121933</p></article>
+          <article class="card"><div style="height:48px;border-radius:12px;background:var(--accent)"></div><p><strong>accent</strong><br/>#6ea8fe</p></article>
+          <article class="card"><div style="height:48px;border-radius:12px;background:var(--accent-2)"></div><p><strong>accent-2</strong><br/>#9b8cff</p></article>
+          <article class="card"><div style="height:48px;border-radius:12px;background:var(--text)"></div><p><strong>text</strong><br/>#eef2ff</p></article>
+          <article class="card"><div style="height:48px;border-radius:12px;background:var(--muted)"></div><p><strong>muted</strong><br/>#b6c2ff</p></article>
+        </div>
+      </section>
+
+      <section class="section" id="type">
+        <div class="section-head"><span class="eyebrow">Tokens</span><h2>Typography</h2></div>
+        <div class="eyebrow">Eyebrow · uppercase label</div>
+        <h1 style="margin:.5rem 0">Heading 1</h1>
+        <h2>Heading 2</h2>
+        <p class="lede">Lede — the larger introductory paragraph used under headings.</p>
+        <p>Body — the default paragraph size and line height for readable long-form content.</p>
+      </section>
+
+      <section class="section" id="buttons">
+        <div class="section-head"><span class="eyebrow">Components</span><h2>Buttons</h2></div>
+        <div class="actions">
+          <a class="button" href="#top">Primary</a>
+          <a class="button secondary" href="#top">Secondary</a>
+          <a class="button small" href="#top">Small</a>
+        </div>
+      </section>
+
+      <section class="section" id="cards">
+        <div class="section-head"><span class="eyebrow">Components</span><h2>Cards</h2></div>
+        <div class="grid cards">
+          <article class="card"><h2>Card title</h2><p>A card groups a single idea on a raised surface with a hairline border.</p></article>
+          <article class="card"><div class="eyebrow">With eyebrow</div><h2>Labelled card</h2><p>Eyebrows add a short category label above the title.</p></article>
+        </div>
+      </section>
+
+      <section class="section split" id="surfaces">
+        <div>
+          <span class="eyebrow">Components</span>
+          <h2>Section &amp; code</h2>
+          <p>Sections are the primary content blocks; <code>split</code> lays out prose beside a code or media panel.</p>
+        </div>
+        <pre><code>// tokens flow one way
+design-tokens.json
+  → styles.css (web)
+  → Penpot (design)
+  → Storybook (components)</code></pre>
+      </section>
+
+      <section class="cta">
+        <h2>Tokens in, consistency out.</h2>
+        <p>Change a token once; every surface — site, design files, and components — follows.</p>
+        <a class="button" href="./design-tokens.json">View tokens</a>
+      </section>
+    </main>
+
+    <footer><p>© AgenNext. Agent Identity for secure autonomous systems. · <a href="./styleguide.html">Design system</a></p></footer>
+  </body>
+</html>
