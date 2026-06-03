@@ -56,4 +56,11 @@ echo "$GRAPH_OUT"
 echo "$GRAPH_OUT" | grep -q 'summary-agent' \
   || { echo "FAIL: expected delegates_to edge to summary-agent"; exit 1; }
 
-echo "✅ SurrealDB smoke test passed (schema loads, events fire, guard enforces grammar, graph traverses)."
+echo ">> verification path: research_agent should have a 'verified' verification"
+VERIFY_OUT=$(echo 'SELECT VALUE status FROM identity_verification WHERE identity = agent_identity:research_agent;' \
+  | surreal sql "${AUTH[@]}" --namespace "$NS" --database "$DB" --json)
+echo "$VERIFY_OUT"
+echo "$VERIFY_OUT" | grep -q 'verified' \
+  || { echo "FAIL: expected a verified identity_verification"; exit 1; }
+
+echo "✅ SurrealDB smoke test passed (schema loads, events fire, guard enforces grammar, graph traverses, verification present)."

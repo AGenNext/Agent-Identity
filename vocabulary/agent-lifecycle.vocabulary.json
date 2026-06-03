@@ -33,6 +33,16 @@
       "usedFor": "Privileged Access Management nodes: Safes that hold privileged accounts/credentials (knowledge-graph safe node and stored_in edge)."
     }
   ],
+  "verification": {
+    "$comment": "Identity verification methods for the identity_verification table in agent_identity.surql. Each method must appear in that table's method ASSERT. 'manual' is an operator escape hatch with no whitepaper grounding and is intentionally not listed here.",
+    "methods": [
+      { "term": "did", "definition": "Proof of control of a W3C DID.", "source": "OpenID whitepaper §3.1 Sovereign and Portable Agent Identity; W3C DID 1.1" },
+      { "term": "oidc", "definition": "OpenID Connect authentication of the agent.", "source": "OpenID whitepaper §2.4 (OAuth 2.1/OIDC); §3.1 OIDC-A [12]" },
+      { "term": "vc", "definition": "Presentation of a Verifiable Credential.", "source": "OpenID whitepaper §3.6 ('signed using Verifiable Credentials (VCs)')" },
+      { "term": "registry", "definition": "Verified via an agent registry.", "source": "OpenID whitepaper §3.3 Registries and Dynamic Connections to External Tools" }
+    ],
+    "statuses": ["pending", "verified", "failed", "revoked"]
+  },
   "graph": {
     "$comment": "Graph-layer edges connecting identity/lifecycle/DID nodes. Every edge must be a RELATION table in the schema, a key in the JSON-LD context, and in the glossary.",
     "edges": [

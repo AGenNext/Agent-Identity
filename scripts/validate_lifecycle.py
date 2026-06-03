@@ -25,6 +25,7 @@ GLOSSARY = ROOT / "docs" / "agent-identity-glossary.md"
 SCHEMA = ROOT / "surreal" / "schema" / "agent_lifecycle.surql"
 DID_SCHEMA = ROOT / "surreal" / "schema" / "agent_did.surql"
 KG_SCHEMA = ROOT / "surreal" / "schema" / "agent_knowledge_graph.surql"
+IDENTITY_SCHEMA = ROOT / "surreal" / "schema" / "agent_identity.surql"
 CONTEXT = ROOT / "vocabulary" / "agent-lifecycle.context.jsonld"
 EXAMPLE = ROOT / "vocabulary" / "examples" / "agent.example.jsonld"
 
@@ -106,6 +107,7 @@ def main() -> int:
     require_sources(vocab.get("triggers", []), "Trigger")
     require_sources(vocab.get("attributes", []), "Attribute")
     require_sources(vocab.get("did", []), "DID property")
+    require_sources(vocab.get("verification", {}).get("methods", []), "Verification method")
     kg = vocab.get("knowledgeGraph", {})
     require_sources(kg.get("nodes", []), "Knowledge-graph node")
     require_sources(kg.get("edges", []), "Knowledge-graph edge")
@@ -188,6 +190,27 @@ def main() -> int:
         for term in kg_terms:
             if f"`{term}`" not in glossary_text:
                 err(f"Glossary is missing knowledge-graph term `{term}`.")
+
+    # --- verification methods must appear in the identity_verification ASSERT ----
+    verification = vocab.get("verification", {})
+    vmethods = [m["term"] for m in verification.get("methods", [])]
+    if vmethods:
+        if not IDENTITY_SCHEMA.exists():
+            err("Required file is missing: surreal/schema/agent_identity.surql")
+        else:
+            id_text = IDENTITY_SCHEMA.read_text()
+            m = re.search(
+                r'DEFINE FIELD method ON TABLE identity_verification[^;]*?IN \[([^\]]*)\]',
+                id_text, re.DOTALL,
+            )
+            schema_methods = set(collect_array(m.group(1))) if m else set()
+            if m is None:
+                err("Could not find the identity_verification `method` ASSERT list in agent_identity.surql.")
+            for term in vmethods:
+                if term not in schema_methods:
+                    err(f"Verification method `{term}` is in the vocabulary but not in the identity_verification method ASSERT.")
+                if f"`{term}`" not in glossary_text:
+                    err(f"Glossary is missing verification method `{term}`.")
 
     # --- edges: schema (RELATION) <-> vocabulary <-> JSON-LD context <-> glossary -
     ctx_keys: set[str] = set()

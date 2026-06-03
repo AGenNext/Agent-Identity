@@ -94,6 +94,31 @@ A DID document is published as JSON-LD using the context `https://www.w3.org/ns/
 | `agent_lifecycle` | The agent's current lifecycle state. | (state maps to [ActionStatusType](https://schema.org/ActionStatusType)) |
 | `lifecycle_audit_log` | A record of each lifecycle change. | [UpdateAction](https://schema.org/UpdateAction) |
 
+## Identity verification
+
+Verification answers the whitepaper's central question — *"is this agent permitted to perform
+this action on behalf of this entity?"* — by establishing a verifiable **who** (§2.4). Each
+verification is a row in `identity_verification` (linked to the agent by the `verified_by`
+edge) with a method and a status. Flows live in
+`surreal/flows/identity_verification.flows.surql`.
+
+**Methods** (how the identity was checked):
+
+| Method | Plain English | Source |
+| --- | --- | --- |
+| `did` | Proof of control of a W3C DID. | §3.1 Sovereign and Portable Agent Identity; W3C DID 1.1 |
+| `oidc` | OpenID Connect authentication of the agent. | §2.4 (OAuth 2.1/OIDC); §3.1 OIDC-A |
+| `vc` | Presentation of a Verifiable Credential. | §3.6 ("signed using Verifiable Credentials (VCs)") |
+| `registry` | Verified through an agent registry. | §3.3 Registries and Dynamic Connections |
+| `manual` | Operator-asserted (escape hatch). | *no whitepaper grounding — operator assertion* |
+
+**Statuses** (where the verification stands): `pending` → `verified`, or `failed`; a
+`verified` record can later be `revoked` (e.g. on credential compromise, §3.2).
+
+In plain English: you **request** a verification (pending), then it becomes **verified** or
+**failed**; a verified one can be **revoked** later. An agent is "currently verified" if it has
+at least one `verified` record.
+
 ## Graph layer
 
 The graph layer connects identity records to each other using SurrealDB's native graph
