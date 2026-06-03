@@ -47,6 +47,7 @@
       { "term": "did", "definition": "Proof of control of a W3C DID.", "source": "OpenID whitepaper §3.1 Sovereign and Portable Agent Identity; W3C DID 1.1" },
       { "term": "oidc", "definition": "OpenID Connect authentication of the agent.", "source": "OpenID whitepaper §2.4 (OAuth 2.1/OIDC); §3.1 OIDC-A [12]" },
       { "term": "vc", "definition": "Presentation of a Verifiable Credential.", "source": "OpenID whitepaper §3.6 ('signed using Verifiable Credentials (VCs)')" },
+      { "term": "spiffe", "definition": "Workload identity verified via a SPIFFE SVID (e.g. an STS backed by SPIFFE/SPIRE).", "source": "OpenID whitepaper §2.8 (SPIFFE/SPIRE workload identity, SVIDs)" },
       { "term": "registry", "definition": "Verified via an agent registry.", "source": "OpenID whitepaper §3.3 Registries and Dynamic Connections to External Tools" }
     ],
     "statuses": ["pending", "verified", "failed", "revoked"]

@@ -109,6 +109,7 @@ edge) with a method and a status. Flows live in
 | `did` | Proof of control of a W3C DID. | §3.1 Sovereign and Portable Agent Identity; W3C DID 1.1 |
 | `oidc` | OpenID Connect authentication of the agent. | §2.4 (OAuth 2.1/OIDC); §3.1 OIDC-A |
 | `vc` | Presentation of a Verifiable Credential. | §3.6 ("signed using Verifiable Credentials (VCs)") |
+| `spiffe` | Workload identity verified via a SPIFFE SVID (e.g. an STS backed by SPIFFE/SPIRE). | §2.8 (SPIFFE/SPIRE, SVIDs) |
 | `registry` | Verified through an agent registry. | §3.3 Registries and Dynamic Connections |
 | `manual` | Operator-asserted (escape hatch). | *no whitepaper grounding — operator assertion* |
 
