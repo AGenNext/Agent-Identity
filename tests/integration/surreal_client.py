@@ -13,6 +13,12 @@ import urllib.error
 import urllib.request
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
+TESTDATA = pathlib.Path(__file__).resolve().parent / "testdata"
+
+
+def load_testdata(name: str) -> dict:
+    """Load a JSON fixture from tests/integration/testdata/."""
+    return json.loads((TESTDATA / name).read_text())
 
 # Schema, in dependency order (agent_identity defines the base tables others use).
 SCHEMA_FILES = [
