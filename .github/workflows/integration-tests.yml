@@ -1,0 +1,49 @@
+name: Integration Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install pytest
+        run: python -m pip install --upgrade pip pytest
+
+      - name: Install SurrealDB
+        run: |
+          curl -sSf https://install.surrealdb.com | sh
+          echo "/usr/local/bin" >> "$GITHUB_PATH"
+          echo "$HOME/.surrealdb" >> "$GITHUB_PATH"
+
+      - name: Start SurrealDB (in-memory)
+        run: |
+          surreal start --username root --password root --bind 127.0.0.1:8000 memory &
+          ready=
+          for i in $(seq 1 30); do
+            if surreal is-ready --endpoint http://127.0.0.1:8000 2>/dev/null; then
+              echo "SurrealDB is ready"; ready=1; break
+            fi
+            sleep 1
+          done
+          if [ -z "$ready" ]; then echo "SurrealDB did not become ready"; exit 1; fi
+
+      - name: Run integration suite
+        env:
+          SURREAL_URL: http://127.0.0.1:8000
+          SURREAL_NS: agent_identity
+          SURREAL_DB: dev
+          SURREAL_USER: root
+          SURREAL_PASS: root
+        run: pytest tests/integration -v -m integration
