@@ -63,4 +63,11 @@ echo "$VERIFY_OUT"
 echo "$VERIFY_OUT" | grep -q 'verified' \
   || { echo "FAIL: expected a verified identity_verification"; exit 1; }
 
-echo "✅ SurrealDB smoke test passed (schema loads, events fire, guard enforces grammar, graph traverses, verification present)."
+echo ">> attenuation path: a delegation exceeding the delegator's entitlements must be rejected"
+ATTEN_OUT=$(echo 'RELATE agent_identity:research_agent->delegates_to->agent_identity:summary_agent SET scope = ["admin:everything"];' \
+  | surreal sql "${AUTH[@]}" --namespace "$NS" --database "$DB" 2>&1 || true)
+echo "$ATTEN_OUT"
+echo "$ATTEN_OUT" | grep -qi "Scope attenuation violated" \
+  || { echo "FAIL: scope attenuation guard did not reject the over-broad delegation"; exit 1; }
+
+echo "✅ SurrealDB smoke test passed (schema loads, events fire, guards enforce grammar + scope attenuation, graph traverses, verification present)."

@@ -149,7 +149,13 @@ mapped to schema.org where one exists and to the `agennext:` namespace otherwise
 In plain English: agents **delegate to** other agents (and that authority can be narrowed
 along the chain), agents **act on behalf of** people, and agents **operate in** trust domains.
 Every lifecycle change is **audited**. You can walk these arrows with the graph queries in
-`surreal/queries/agent_graph.queries.surql`.
+`surreal/queries/agent_graph.queries.surql`, and manage them with the delegation flows in
+`surreal/flows/delegation.flows.surql`.
+
+**Scope attenuation (enforced):** a delegation may not grant more than the delegator holds.
+The `delegates_to_attenuation` event rejects a delegated `scope` that is not a subset of the
+delegator's lifecycle `entitlements` (§3.2 / §4.4 — "progressively and verifiably narrow
+permissions"). Recursive sub-delegations narrow scope further at each hop.
 
 ## Knowledge graph (governance)
 
