@@ -28,6 +28,7 @@ SCHEMA_FILES = [
     "surreal/schema/agent_graph.surql",
     "surreal/schema/agent_knowledge_graph.surql",
     "surreal/schema/access_review.surql",
+    "surreal/schema/agent_economy.surql",
 ]
 SEED_FILES = [
     "surreal/seeds/agent_identity.seed.surql",

@@ -110,6 +110,7 @@ edge) with a method and a status. Flows live in
 | `oidc` | OpenID Connect authentication of the agent. | §2.4 (OAuth 2.1/OIDC); §3.1 OIDC-A |
 | `vc` | Presentation of a Verifiable Credential. | §3.6 ("signed using Verifiable Credentials (VCs)") |
 | `spiffe` | Workload identity verified via a SPIFFE SVID (e.g. an STS backed by SPIFFE/SPIRE). | §2.8 (SPIFFE/SPIRE, SVIDs) |
+| `kya` | Know Your Agent — KYC/KYB-style identity verification applied to the agent. | §3.6 (KYAPay) |
 | `registry` | Verified through an agent registry. | §3.3 Registries and Dynamic Connections |
 | `manual` | Operator-asserted (escape hatch). | *no whitepaper grounding — operator assertion* |
 
@@ -137,6 +138,30 @@ In plain English: you **open a review** of an agent's entitlements with a due da
 **certifies** (keeps) or **revokes** the access. A `revoked` decision should be followed by the
 lifecycle `revoke` flow to actually switch off the credentials. Overdue pending reviews are a
 governance red flag.
+
+## Economy (payments)
+
+The economic layer lets an agent transact on a principal's behalf within signed, auditable
+limits (§3.6). Mandates and transactions are rows linked to the agent; flows live in
+`surreal/flows/economy.flows.surql`.
+
+**Mandate types** (AP2 — a mandate is a signed, auditable instruction):
+
+| Term | Plain English | Source |
+| --- | --- | --- |
+| `intent` | An **Intent Mandate** — a signed high-level instruction with the limits the agent must stay within. | §3.6 (AP2 Intent Mandate) |
+| `cart` | A **Cart Mandate** — the principal's signed approval of a specific purchase. | §3.6 (AP2 Cart Mandate) |
+
+**Statuses:** a mandate is `signed` → `fulfilled`, or `revoked`. A transaction is `pending` →
+`settled`, or `failed`. A transaction may not exceed its mandate's `amount_limit` (enforced by
+the `agent_transaction_limit` event), and high-consequence transactions record whether the
+settling API was **FAPI**-secured (§3.6).
+
+In plain English: a person signs an **intent** ("book my travel, under $2,000"); the agent finds
+an option and the person signs a **cart** for that specific purchase; the agent records a
+**transaction** under that mandate, which **settles**. Every transaction traces back through its
+mandate to the human who authorized it. **Know Your Agent (`kya`)** verification (above) is the
+identity check that lets an agent be trusted to transact at all.
 
 ## Graph layer
 

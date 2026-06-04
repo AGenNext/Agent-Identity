@@ -27,6 +27,7 @@ DID_SCHEMA = ROOT / "surreal" / "schema" / "agent_did.surql"
 KG_SCHEMA = ROOT / "surreal" / "schema" / "agent_knowledge_graph.surql"
 IDENTITY_SCHEMA = ROOT / "surreal" / "schema" / "agent_identity.surql"
 ACCESS_REVIEW_SCHEMA = ROOT / "surreal" / "schema" / "access_review.surql"
+ECONOMY_SCHEMA = ROOT / "surreal" / "schema" / "agent_economy.surql"
 CONTEXT = ROOT / "vocabulary" / "agent-lifecycle.context.jsonld"
 EXAMPLE = ROOT / "vocabulary" / "examples" / "agent.example.jsonld"
 
@@ -110,6 +111,7 @@ def main() -> int:
     require_sources(vocab.get("did", []), "DID property")
     require_sources(vocab.get("verification", {}).get("methods", []), "Verification method")
     require_sources(vocab.get("accessReview", {}).get("decisions", []), "Access-review decision")
+    require_sources(vocab.get("economy", {}).get("mandateTypes", []), "Mandate type")
     kg = vocab.get("knowledgeGraph", {})
     require_sources(kg.get("nodes", []), "Knowledge-graph node")
     require_sources(kg.get("edges", []), "Knowledge-graph edge")
@@ -233,6 +235,26 @@ def main() -> int:
                     err(f"Access-review decision `{term}` is in the vocabulary but not in the access_review decision ASSERT.")
                 if f"`{term}`" not in glossary_text:
                     err(f"Glossary is missing access-review decision `{term}`.")
+
+    # --- economy mandate types must appear in the payment_mandate ASSERT --------
+    mandate_types = [m["term"] for m in vocab.get("economy", {}).get("mandateTypes", [])]
+    if mandate_types:
+        if not ECONOMY_SCHEMA.exists():
+            err("Required file is missing: surreal/schema/agent_economy.surql")
+        else:
+            ec_text = ECONOMY_SCHEMA.read_text()
+            m = re.search(
+                r'DEFINE FIELD type ON TABLE payment_mandate[^;]*?IN \[([^\]]*)\]',
+                ec_text, re.DOTALL,
+            )
+            schema_types = set(collect_array(m.group(1))) if m else set()
+            if m is None:
+                err("Could not find the payment_mandate `type` ASSERT list.")
+            for term in mandate_types:
+                if term not in schema_types:
+                    err(f"Mandate type `{term}` is in the vocabulary but not in the payment_mandate type ASSERT.")
+                if f"`{term}`" not in glossary_text:
+                    err(f"Glossary is missing mandate type `{term}`.")
 
     # --- edges: schema (RELATION) <-> vocabulary <-> JSON-LD context <-> glossary -
     ctx_keys: set[str] = set()
