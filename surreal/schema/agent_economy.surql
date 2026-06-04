@@ -62,10 +62,16 @@ DEFINE FIELD created_at ON TABLE agent_transaction TYPE datetime DEFAULT time::n
 DEFINE INDEX agent_transaction_identity_idx ON TABLE agent_transaction COLUMNS identity;
 DEFINE INDEX agent_transaction_mandate_idx ON TABLE agent_transaction COLUMNS mandate;
 
--- A cart mandate may not authorize spend beyond the amount it carries, and a
--- transaction may not exceed its mandate's amount_limit. Enforced in-transaction.
-DEFINE EVENT agent_transaction_limit ON TABLE agent_transaction WHEN $event = "CREATE" THEN {
-  LET $limit = (SELECT VALUE amount_limit FROM ONLY payment_mandate WHERE id = $after.mandate LIMIT 1);
+-- A transaction must reference a real mandate and may not exceed its amount_limit.
+-- Enforced on CREATE and UPDATE so the limit can't be bypassed by mutating a row
+-- (changing amount or swapping mandate) after creation.
+DEFINE EVENT agent_transaction_limit ON TABLE agent_transaction WHEN
+  $event = "CREATE" OR $event = "UPDATE" THEN {
+  LET $mandate = (SELECT amount_limit FROM payment_mandate WHERE id = $after.mandate);
+  IF array::len($mandate) = 0 {
+    THROW "Transaction references a non-existent payment_mandate";
+  };
+  LET $limit = $mandate[0].amount_limit;
   IF $limit != NONE AND $after.amount > $limit {
     THROW "Transaction amount exceeds the mandate's amount_limit";
   };

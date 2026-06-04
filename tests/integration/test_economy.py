@@ -24,3 +24,21 @@ def test_transaction_over_limit_rejected(surreal):
         'mandate: payment_mandate:test_m, amount: 9999, currency: "USD" };'
     )
     assert any("exceeds the mandate's amount_limit" in e for e in errs)
+
+
+def test_transaction_missing_mandate_rejected(surreal):
+    errs = surreal.errors(
+        'CREATE agent_transaction CONTENT { identity: agent_identity:research_agent, '
+        'mandate: payment_mandate:does_not_exist, amount: 1, currency: "USD" };'
+    )
+    assert any("non-existent payment_mandate" in e for e in errs)
+
+
+def test_over_limit_update_rejected(surreal):
+    # A within-limit transaction cannot be mutated above the mandate limit afterwards.
+    surreal.run(
+        'CREATE agent_transaction:test_tx2 CONTENT { identity: agent_identity:research_agent, '
+        'mandate: payment_mandate:test_m, amount: 100, currency: "USD", status: "pending" };'
+    )
+    errs = surreal.errors('UPDATE agent_transaction:test_tx2 SET amount = 9999;')
+    assert any("exceeds the mandate's amount_limit" in e for e in errs)
