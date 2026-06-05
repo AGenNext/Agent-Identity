@@ -58,7 +58,7 @@ DEFINE TABLE identity_verification SCHEMAFULL PERMISSIONS NONE;
 DEFINE FIELD identity ON TABLE identity_verification TYPE record<agent_identity>;
 DEFINE FIELD verifier ON TABLE identity_verification TYPE string;
 DEFINE FIELD method ON TABLE identity_verification TYPE string
-  ASSERT $value IN ["did", "oidc", "vc", "spiffe", "manual", "registry"];
+  ASSERT $value IN ["did", "oidc", "vc", "spiffe", "kya", "manual", "registry"];
 DEFINE FIELD evidence_ref ON TABLE identity_verification TYPE option<string>;
 DEFINE FIELD status ON TABLE identity_verification TYPE string DEFAULT "pending"
   ASSERT $value IN ["pending", "verified", "failed", "revoked"];

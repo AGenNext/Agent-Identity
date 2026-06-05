@@ -33,6 +33,15 @@
       "usedFor": "Privileged Access Management nodes: Safes that hold privileged accounts/credentials (knowledge-graph safe node and stored_in edge)."
     }
   ],
+  "economy": {
+    "$comment": "Agent economic layer (AP2 mandates + KYAPay), grounded in OpenID whitepaper §3.6. Mandate types must appear in the payment_mandate type ASSERT in surreal/schema/agent_economy.surql. Vendor-neutral: AP2/KYAPay/FAPI are open protocols, and the model carries no single-provider assumption.",
+    "mandateTypes": [
+      { "term": "intent", "definition": "An Intent Mandate: a signed high-level instruction with the limits the agent must stay within.", "source": "OpenID whitepaper §3.6 (AP2 Intent Mandate)" },
+      { "term": "cart", "definition": "A Cart Mandate: the principal's signed approval of a specific purchase.", "source": "OpenID whitepaper §3.6 (AP2 Cart Mandate)" }
+    ],
+    "mandateStatuses": ["signed", "fulfilled", "revoked"],
+    "transactionStatuses": ["pending", "settled", "failed"]
+  },
   "accessReview": {
     "$comment": "Access review / certification decisions for the access_review table in surreal/schema/access_review.surql. Each decision must appear in that table's decision ASSERT.",
     "decisions": [
@@ -48,6 +57,7 @@
       { "term": "oidc", "definition": "OpenID Connect authentication of the agent.", "source": "OpenID whitepaper §2.4 (OAuth 2.1/OIDC); §3.1 OIDC-A [12]" },
       { "term": "vc", "definition": "Presentation of a Verifiable Credential.", "source": "OpenID whitepaper §3.6 ('signed using Verifiable Credentials (VCs)')" },
       { "term": "spiffe", "definition": "Workload identity verified via a SPIFFE SVID (e.g. an STS backed by SPIFFE/SPIRE).", "source": "OpenID whitepaper §2.8 (SPIFFE/SPIRE workload identity, SVIDs)" },
+      { "term": "kya", "definition": "Know Your Agent verification, extending KYC/KYB identity checks to the agent.", "source": "OpenID whitepaper §3.6 (KYAPay 'Know Your Agent')" },
       { "term": "registry", "definition": "Verified via an agent registry.", "source": "OpenID whitepaper §3.3 Registries and Dynamic Connections to External Tools" }
     ],
     "statuses": ["pending", "verified", "failed", "revoked"]
