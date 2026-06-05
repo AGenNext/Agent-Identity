@@ -20,3 +20,6 @@ jobs:
 
       - name: Run launch readiness checker
         run: python scripts/check_launch_ready.py
+
+      - name: Validate site links and SEO tags
+        run: python scripts/check_site_links.py
