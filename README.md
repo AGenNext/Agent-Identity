@@ -16,7 +16,8 @@ trail — grounded in the OpenID Foundation's *Identity Management for Agentic A
   (plain English), kept in sync and source-cited by `scripts/validate_lifecycle.py`.
 - **Integrations** — declarative connector manifests (`connectors/`) for Okta, SailPoint,
   CyberArk, and SCIM, plus an MCP server (`mcp/`). See [`docs/integrations.md`](docs/integrations.md).
-- **Site** — `site/`: the story (Web 1.0 → the agentic web), docs, API, SDK, security, and the
+- **Site** — `site/`: the story (Web 1.0 → the agentic web), docs, [tutorials](docs/tutorials.md)
+  (register → issue credential → rotate key → verify trust), API, SDK, security, and the
   design system; deployed via GitHub Pages.
 - **Tests & CI** — a SurrealDB integration suite (`tests/integration/`) and validation/release
   workflows under `.github/workflows/`.

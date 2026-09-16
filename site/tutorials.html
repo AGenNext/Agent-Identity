@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tutorials | Agent Identity</title>
+    <meta name="description" content="Hands-on tutorials: register an agent, issue a credential, rotate a key, and verify trust." />
+    <link rel="canonical" href="https://agennext.github.io/Agent-Identity/tutorials.html" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Agent Identity" />
+    <meta property="og:title" content="Tutorials | Agent Identity" />
+    <meta property="og:description" content="Hands-on tutorials: register an agent, issue a credential, rotate a key, and verify trust." />
+    <meta property="og:url" content="https://agennext.github.io/Agent-Identity/tutorials.html" />
+    <meta property="og:image" content="https://agennext.github.io/Agent-Identity/assets/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Tutorials | Agent Identity" />
+    <meta name="twitter:description" content="Hands-on tutorials: register an agent, issue a credential, rotate a key, and verify trust." />
+    <meta name="twitter:image" content="https://agennext.github.io/Agent-Identity/assets/og-image.png" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="nav">
+      <a class="brand" href="./index.html">Agent Identity</a>
+      <nav>
+        <a href="./index.html">Home</a>
+        <a href="./story.html">Story</a>
+        <a href="./docs.html">Docs</a>
+        <a href="./tutorials.html">Tutorials</a>
+        <a href="./api.html">API</a>
+        <a href="./swagger.html">Swagger</a>
+        <a href="./sdk.html">SDK</a>
+        <a href="./security.html">Security</a>
+        <a class="button small" href="https://github.com/AGenNext/Agent-Identity">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="eyebrow">Tutorials</div>
+        <h1>From zero to a trusted agent in four steps.</h1>
+        <p class="lede">
+          Runnable walkthroughs against the real model — the same SurrealQL the flows use. Load the
+          schema and seeds (see <code>scripts/surreal_smoke_test.sh</code>), then follow along.
+          Full versions in <a href="https://github.com/AGenNext/Agent-Identity/blob/main/docs/tutorials.md">docs/tutorials.md</a>.
+        </p>
+      </section>
+
+      <section class="section split" id="register">
+        <div>
+          <span class="eyebrow">Tutorial 1</span>
+          <h2>Register an agent</h2>
+          <p>Create the identity, provision its lifecycle, and activate it. The agent is now a
+          first-class, governed identity.</p>
+        </div>
+        <pre><code>CREATE agent_identity:acme_bot CONTENT {
+  subject: "agent:acme-bot", status: "active"
+};
+CREATE agent_lifecycle CONTENT {
+  identity: agent_identity:acme_bot,
+  state: "provisioned", entitlements: ["agent.identity"]
+};
+UPDATE agent_lifecycle SET previous_state = state, state = "active"
+WHERE identity = agent_identity:acme_bot;</code></pre>
+      </section>
+
+      <section class="section split" id="issue">
+        <div>
+          <span class="eyebrow">Tutorial 2</span>
+          <h2>Issue a credential</h2>
+          <p>Record a Verifiable Credential — a credential subject plus a <code>vc</code>
+          verification, linked to the agent.</p>
+        </div>
+        <pre><code>CREATE credential_subject CONTENT {
+  identity: agent_identity:acme_bot,
+  subject_id: "agent:acme-bot",
+  claims: { capabilities: ["research"] }
+};
+LET $v = (CREATE ONLY identity_verification CONTENT {
+  identity: agent_identity:acme_bot, method: "vc",
+  verifier: "did:web:identity.agennext.dev",
+  status: "verified", verified_at: time::now()
+});
+RELATE agent_identity:acme_bot->verified_by->$v.id;</code></pre>
+      </section>
+
+      <section class="section split" id="rotate">
+        <div>
+          <span class="eyebrow">Tutorial 3</span>
+          <h2>Rotate a key</h2>
+          <p>Add a new DID verification method, make it the only <code>authentication</code> key,
+          and retire the old one (kept for history).</p>
+        </div>
+        <pre><code>LET $k2 = (CREATE ONLY verification_method CONTENT {
+  document: did_document:acme_bot,
+  id: "did:web:agents.agennext.dev:acme-bot#key-2",
+  type: "Multikey", controller: "did:web:agennext.dev",
+  publicKeyMultibase: "z6MkNewKeyMaterial"
+});
+RELATE did_document:acme_bot->has_verification_method->$k2.id;
+UPDATE did_document:acme_bot SET
+  verificationMethod += $k2.id,
+  authentication = [$k2.id];</code></pre>
+      </section>
+
+      <section class="section split" id="verify">
+        <div>
+          <span class="eyebrow">Tutorial 4</span>
+          <h2>Verify trust before acting</h2>
+          <p>A downstream service checks three things at once: the agent is <strong>active</strong>,
+          has a <strong>verified</strong> credential, and <strong>operates in</strong> a trust
+          domain. Any failure → refuse.</p>
+        </div>
+        <pre><code>SELECT
+  (SELECT VALUE state FROM ONLY agent_lifecycle
+     WHERE identity = agent_identity:acme_bot LIMIT 1) AS state,
+  count(SELECT id FROM identity_verification
+     WHERE identity = agent_identity:acme_bot
+       AND status = "verified") AS verified_count,
+  ->operates_in->trust_domain.name AS trust_domains
+FROM agent_identity:acme_bot;</code></pre>
+      </section>
+
+      <section class="cta">
+        <h2>Trust is earned, verified, and revocable.</h2>
+        <p>Register, credential, rotate, verify — then the same lifecycle lets you revoke and
+        de-provision when the agent's job is done.</p>
+        <a class="button" href="./docs.html">Read the docs</a>
+      </section>
+    </main>
+
+    <footer><p>© AgenNext. Agent Identity for secure autonomous systems. · <a href="./styleguide.html">Design system</a></p></footer>
+  </body>
+</html>
