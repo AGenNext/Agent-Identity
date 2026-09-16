@@ -1,0 +1,23 @@
+{
+  "id": "scim-agentic",
+  "name": "SCIM Agentic Identity",
+  "provider": "Generic SCIM 2.0",
+  "category": "scim",
+  "version": "1.0.0",
+  "docs": "https://datatracker.ietf.org/doc/draft-wahl-scim-agent-schema/",
+  "auth": { "type": "scim_token" },
+  "capabilities": ["provision", "deprovision", "attributes"],
+  "endpoints": {
+    "agentic_identities": "https://{host}/scim/v2/AgenticIdentities"
+  },
+  "events": [
+    { "on": "POST AgenticIdentity", "action": "provision" },
+    { "on": "PATCH active=false", "action": "revoke" },
+    { "on": "DELETE AgenticIdentity", "action": "deprovision" }
+  ],
+  "mapping": {
+    "AgenticIdentity": "agent_identity",
+    "owner": "owners",
+    "entitlement": "entitlement"
+  }
+}

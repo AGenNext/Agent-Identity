@@ -1,0 +1,32 @@
+{
+  "id": "sailpoint",
+  "name": "SailPoint Identity Security Cloud",
+  "provider": "SailPoint",
+  "category": "iga",
+  "version": "1.0.0",
+  "docs": "https://developer.sailpoint.com/docs/api/v3/",
+  "auth": { "type": "oauth2", "scopes": ["sp:scopes:all"] },
+  "capabilities": ["entitlements", "access_review", "provision", "deprovision"],
+  "endpoints": {
+    "sources": "https://{tenant}.api.identitynow.com/v3/sources",
+    "accounts": "https://{tenant}.api.identitynow.com/v3/accounts",
+    "entitlements": "https://{tenant}.api.identitynow.com/v3/entitlements",
+    "access_profiles": "https://{tenant}.api.identitynow.com/v3/access-profiles",
+    "roles": "https://{tenant}.api.identitynow.com/v3/roles",
+    "certifications": "https://{tenant}.api.identitynow.com/v3/certifications"
+  },
+  "events": [
+    { "on": "ACCOUNT_CREATED", "action": "provision" },
+    { "on": "ACCESS_REQUEST_GRANTED", "action": "update_entitlements" },
+    { "on": "CERTIFICATION_STARTED", "action": "open_review" },
+    { "on": "ACCOUNT_DISABLED", "action": "revoke" }
+  ],
+  "mapping": {
+    "source": "source",
+    "account": "account",
+    "entitlement": "entitlement",
+    "accessProfile": "access_profile",
+    "role": "role",
+    "certification": "access_review"
+  }
+}

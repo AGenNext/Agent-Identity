@@ -1,0 +1,26 @@
+{
+  "id": "okta",
+  "name": "Okta",
+  "provider": "Okta",
+  "category": "idp",
+  "version": "1.0.0",
+  "docs": "https://developer.okta.com/docs/api/",
+  "auth": { "type": "oidc", "scopes": ["okta.users.manage", "okta.schemas.read"] },
+  "capabilities": ["provision", "deprovision", "verify", "lifecycle_events", "attributes"],
+  "endpoints": {
+    "issuer": "https://{tenant}.okta.com/oauth2/default",
+    "users": "https://{tenant}.okta.com/api/v1/users",
+    "schema": "https://{tenant}.okta.com/api/v1/meta/schemas/user/default"
+  },
+  "events": [
+    { "on": "user.lifecycle.create", "action": "provision" },
+    { "on": "user.lifecycle.activate", "action": "activate" },
+    { "on": "user.lifecycle.deactivate", "action": "revoke" },
+    { "on": "user.lifecycle.delete.completed", "action": "deprovision" }
+  ],
+  "mapping": {
+    "user": "agent_identity",
+    "schemaProperty": "schema_attribute",
+    "group": "role"
+  }
+}

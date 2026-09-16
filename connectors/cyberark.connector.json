@@ -1,0 +1,18 @@
+{
+  "id": "cyberark",
+  "name": "CyberArk Privileged Access Manager",
+  "provider": "CyberArk",
+  "category": "pam",
+  "version": "1.0.0",
+  "docs": "https://api-docs.cyberark.com/",
+  "auth": { "type": "api_key" },
+  "capabilities": ["secrets", "sessions"],
+  "endpoints": {
+    "safes": "https://{tenant}.privilegecloud.cyberark.com/PasswordVault/API/Safes",
+    "accounts": "https://{tenant}.privilegecloud.cyberark.com/PasswordVault/API/Accounts"
+  },
+  "mapping": {
+    "safe": "safe",
+    "account": "account"
+  }
+}

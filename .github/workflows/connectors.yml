@@ -1,4 +1,4 @@
-name: Launch Readiness Check
+name: Connector Validation
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  validate-launch-assets:
+  validate-connectors:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,8 +21,8 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Run launch readiness checker
-        run: python scripts/check_launch_ready.py
+      - name: Validate connector manifests
+        run: python scripts/validate_connectors.py
 
-      - name: Validate site links and SEO tags
-        run: python scripts/check_site_links.py
+      - name: Syntax-check the MCP server
+        run: python -m py_compile mcp/agent_identity_server.py

@@ -8,6 +8,9 @@ on:
     types: [created, published]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   validate-release:
     runs-on: ubuntu-latest
