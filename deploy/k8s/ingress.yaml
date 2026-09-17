@@ -1,0 +1,20 @@
+# Exposes the Agent Identity API. Set ingressClassName + host for your cluster,
+# and add TLS (cert-manager) in production.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: agent-identity
+  namespace: agent-identity
+spec:
+  # ingressClassName: nginx
+  rules:
+    - host: agent-identity.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: agent-identity-api
+                port:
+                  number: 80
