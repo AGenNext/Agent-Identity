@@ -24,3 +24,12 @@ validate-release:
 
 smoke:
 	bash scripts/surreal_smoke_test.sh
+
+k8s-image:
+	docker build -t ghcr.io/agennext/agent-identity-api:latest apps/api
+
+k8s-schema:
+	bash deploy/k8s/create-schema-configmap.sh
+
+k8s-deploy:
+	kubectl apply -k deploy/k8s

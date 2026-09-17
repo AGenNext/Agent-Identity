@@ -5,3 +5,6 @@ __pycache__/
 .pytest_cache/
 coverage.xml
 htmlcov/
+
+# Kubernetes real secret (never commit)
+deploy/k8s/secret.yaml

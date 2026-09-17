@@ -46,6 +46,18 @@ cp .env.example .env
 docker compose up --build
 ```
 
+## Kubernetes
+
+Vendor-neutral, k8s-native manifests (Kustomize) deploy SurrealDB, a schema-load Job, and the
+API — see [`deploy/k8s/README.md`](deploy/k8s/README.md).
+
+```bash
+make k8s-image     # build & push the API image
+make k8s-schema    # load the SurrealQL into a ConfigMap
+kubectl apply -f deploy/k8s/secret.yaml   # your copy of secret.example.yaml
+make k8s-deploy    # kubectl apply -k deploy/k8s
+```
+
 ## Health check
 
 - http://localhost:8000/health

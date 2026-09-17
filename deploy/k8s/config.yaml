@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agent-identity-config
+  namespace: agent-identity
+data:
+  # SurrealDB connection used by the API (in-cluster service DNS).
+  SURREAL_URL: "http://surrealdb:8000/rpc"
+  SURREAL_USER: "root"
+  SURREAL_NS: "agent_identity"
+  SURREAL_DB: "dev"
+  NODE_ENV: "production"
+  PORT: "3000"

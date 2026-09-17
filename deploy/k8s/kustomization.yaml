@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# The Secret (secret.example.yaml) and the schema ConfigMap
+# (create-schema-configmap.sh) are applied out-of-band before this — see README.
+resources:
+  - namespace.yaml
+  - config.yaml
+  - surrealdb.yaml
+  - schema-load-job.yaml
+  - api.yaml
+  - ingress.yaml
+
+images:
+  - name: ghcr.io/agennext/agent-identity-api
+    newTag: latest
